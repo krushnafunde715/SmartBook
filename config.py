@@ -33,7 +33,14 @@ class Config:
 
     # If DATABASE_URL or MySQL credentials provided, build MySQL connection URI
     if os.environ.get('DATABASE_URL'):
-        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+        database_url = os.environ.get('DATABASE_URL')
+        if database_url.startswith('mysql://'):
+            database_url = database_url.replace(
+                'mysql://',
+                'mysql+pymysql://',
+                1
+            )
+        SQLALCHEMY_DATABASE_URI = database_url
     elif MYSQL_USER and MYSQL_PASSWORD:
         SQLALCHEMY_DATABASE_URI = (
             f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}?charset=utf8mb4"
