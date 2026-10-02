@@ -72,3 +72,8 @@ Thumbs.db
 scratch/
 audit_*.py
 reconcile_*.py
+
+.env
+certificates/
+__pycache__/
+*.pyc

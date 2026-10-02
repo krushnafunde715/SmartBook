@@ -34,12 +34,23 @@ class Config:
     # If DATABASE_URL or MySQL credentials provided, build MySQL connection URI
     if os.environ.get('DATABASE_URL'):
         database_url = os.environ.get('DATABASE_URL')
+
         if database_url.startswith('mysql://'):
             database_url = database_url.replace(
                 'mysql://',
                 'mysql+pymysql://',
                 1
             )
+
+        if 'ssl-mode=REQUIRED' in database_url:
+            database_url = database_url.replace(
+                '?ssl-mode=REQUIRED',
+                ''
+            ).replace(
+                '&ssl-mode=REQUIRED',
+                ''
+            )
+
         SQLALCHEMY_DATABASE_URI = database_url
     elif MYSQL_USER and MYSQL_PASSWORD:
         SQLALCHEMY_DATABASE_URI = (
@@ -53,6 +64,14 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
         'pool_pre_ping': True,
         'pool_recycle': int(os.environ.get('DB_POOL_RECYCLE', 280)),
+        'connect_args': {
+            'ssl': {
+                'ca': os.environ.get(
+                        'DB_CA_CERT',
+                        os.path.join(basedir, 'certificates', 'ca.pem')
+                    )
+            }
+        }
     }
 
 
@@ -85,7 +104,15 @@ class ProductionConfig(Config):
         'pool_pre_ping': True,
         'pool_recycle': int(os.environ.get('DB_POOL_RECYCLE', 280)),
         'pool_size': int(os.environ.get('DB_POOL_SIZE', 10)),
-        'max_overflow': int(os.environ.get('DB_MAX_OVERFLOW', 20))
+        'max_overflow': int(os.environ.get('DB_MAX_OVERFLOW', 20)),
+        'connect_args': {
+            'ssl': {
+                'ca': os.environ.get(
+                        'DB_CA_CERT',
+                        os.path.join(basedir, 'certificates', 'ca.pem')
+                    )
+            }
+        }
     }
 
 
