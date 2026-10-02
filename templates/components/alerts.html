@@ -1,0 +1,47 @@
+{#
+  SMARTBOOK — GLOBAL REUSABLE ALERT COMPONENT
+  Centralized Partial for Flask Flash Messages, Toast Container, and Confirmation Dialogs
+#}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="sb-flash-container mb-3" aria-live="polite">
+      {% for category, message in messages %}
+        {% set alert_type = 'danger' if category in ['danger', 'error'] else (category if category in ['success', 'warning', 'info'] else 'info') %}
+        {% set icon_class = 'bi-check-circle-fill' if alert_type == 'success' else ('bi-exclamation-octagon-fill' if alert_type == 'danger' else ('bi-exclamation-triangle-fill' if alert_type == 'warning' else 'bi-info-circle-fill')) %}
+
+        <div class="sb-alert sb-alert-{{ alert_type }} sb-alert-dismissible fade show" role="{{ 'alert' if alert_type == 'danger' else 'status' }}">
+          <div class="sb-alert-icon-wrap">
+            <i class="bi {{ icon_class }}"></i>
+          </div>
+          <div class="sb-alert-content">
+            <div class="sb-alert-message">{{ message }}</div>
+          </div>
+          <button type="button" class="sb-alert-close" aria-label="Close alert" title="Close">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- Global Floating Toast Container -->
+<div id="sb-global-toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Global Accessible Confirmation Modal -->
+<div id="sb-confirm-modal" class="sb-confirm-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="sb-confirm-dialog" role="document">
+    <div class="sb-confirm-header">
+      <div class="sb-confirm-icon-wrap" id="sbConfirmIconWrap">
+        <i class="bi bi-question-circle-fill" id="sbConfirmIcon"></i>
+      </div>
+      <h4 class="sb-confirm-title" id="sbConfirmTitle">Confirm Action</h4>
+    </div>
+    <div class="sb-confirm-message" id="sbConfirmMessage">Are you sure you want to proceed?</div>
+    <div class="sb-confirm-actions">
+      <button type="button" class="sb-confirm-btn sb-confirm-btn-cancel" id="sbConfirmCancelBtn">Cancel</button>
+      <button type="button" class="sb-confirm-btn sb-confirm-btn-primary" id="sbConfirmOkBtn">Confirm</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,367 @@
+{% extends 'base.html' %}
+
+{% block title %}My Books — SmartBook{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') if url_for else '/static/css/dashboard.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') if url_for else '/static/css/explore.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/my_books.css') if url_for else '/static/css/my_books.css' }}">
+{% endblock %}
+
+{% block content %}
+<div class="sb-dash-layout">
+    <!-- ==========================================================================
+         A. LEFT SIDEBAR (Dark Forest Green #163E30)
+         ========================================================================== -->
+    <aside class="sb-dash-sidebar">
+        <div>
+            <!-- SmartBook Original Approved Brand Logo -->
+            <a href="/" class="sb-dash-brand-wrap" title="SmartBook">
+                <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}" alt="SmartBook Logo" class="sb-dash-brand-logo">
+            </a>
+
+            <!-- Navigation Items -->
+            <ul class="sb-dash-nav">
+                <li>
+                    <a href="/dashboard" class="sb-dash-nav-link">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/explore" class="sb-dash-nav-link">
+                        <i class="bi bi-search"></i>
+                        <span>Explore Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/my-books" class="sb-dash-nav-link active">
+                        <i class="bi bi-journal-bookmark-fill"></i>
+                        <span>My Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/wishlist" class="sb-dash-nav-link">
+                        <i class="bi bi-heart"></i>
+                        <span>My Wishlist</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/history" class="sb-dash-nav-link">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Reading History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/profile" class="sb-dash-nav-link">
+                        <i class="bi bi-person"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sb-dash-divider"></div>
+
+            <ul class="sb-dash-nav">
+                <li>
+                    <form action="{{ url_for('auth.logout') if url_for else '/auth/logout' }}" method="POST" class="sb-logout-form m-0 p-0" id="logoutForm">
+                        <button type="submit" class="sb-dash-nav-link logout" title="Log out of SmartBook">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Botanical Stacked Books Illustration -->
+        <div class="sb-dash-sidebar-footer">
+            <img src="/static/images/sidebar-books-art.svg" alt="Botanical Books Illustration" class="sb-dash-sidebar-art">
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+         MAIN VIEWPORT
+         ========================================================================== -->
+    <div class="sb-dash-main">
+        <!-- Top Navigation Bar -->
+        <header class="sb-dash-header">
+            <!-- Global Search Bar -->
+            <div class="sb-dash-search-wrap">
+                <i class="bi bi-search sb-dash-search-icon"></i>
+                <input type="text" class="sb-dash-search-input" id="sbTopSearch" placeholder="Search your books and reading progress...">
+            </div>
+
+            <!-- User Area -->
+            <div class="sb-dash-user-area">
+                <button type="button" class="sb-dash-notify-btn" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                    <span class="sb-dash-notify-dot"></span>
+                </button>
+
+                <a href="/profile" class="sb-dash-user-profile" title="My Profile" style="text-decoration: none; color: inherit;">
+                    <img src="{{ current_user.avatar_url if current_user and current_user.is_authenticated else 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" alt="{{ current_user.full_name if current_user and current_user.is_authenticated else 'Krushna' }}" class="sb-dash-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Krushna&background=163E30&color=fff'">
+                    <span class="sb-dash-username">{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}</span>
+                    <i class="bi bi-chevron-down ms-1 text-muted" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="sb-dash-body">
+            <!-- Page Header -->
+            <div class="sb-mybooks-header">
+                <div class="sb-mybooks-title-row">
+                    <div>
+                        <h1 class="sb-mybooks-title">My Books</h1>
+                        <p class="sb-mybooks-subtitle">Your personal reading space. Keep track of every chapter.</p>
+                    </div>
+                    <div class="sb-mybooks-stats-wrap">
+                        <span class="sb-mybooks-stat-pill" id="totalBooksPill">
+                            <i class="bi bi-bookshelf"></i> <strong id="totalBooksCount">{{ stats.total_books if stats else (total_count if total_count else 0) }}</strong> Books in Library
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar & Shelf Switcher Tabs -->
+            <div class="sb-mybooks-toolbar">
+                <div class="sb-mybooks-search-wrap">
+                    <i class="bi bi-search sb-mybooks-search-icon"></i>
+                    <input type="text" class="sb-mybooks-search-input" id="myBooksSearch" placeholder="Filter your personal library by title, author...">
+                </div>
+
+                <div class="sb-shelf-tabs" role="tablist">
+                    <button type="button" class="sb-shelf-tab active" data-shelf-filter="all">
+                        <span>All Shelves</span>
+                        <span class="sb-shelf-tab-count" id="tabCountAll">{{ stats.total_books if stats else (total_count if total_count else 0) }}</span>
+                    </button>
+                    <button type="button" class="sb-shelf-tab" data-shelf-filter="currently-reading">
+                        <i class="bi bi-book-half"></i>
+                        <span>Currently Reading</span>
+                        <span class="sb-shelf-tab-count" id="tabCountReading">{{ stats.currently_reading_books if stats else (currently_reading|length if currently_reading else 0) }}</span>
+                    </button>
+                    <button type="button" class="sb-shelf-tab" data-shelf-filter="want-to-read">
+                        <i class="bi bi-bookmark-plus"></i>
+                        <span>Want to Read</span>
+                        <span class="sb-shelf-tab-count" id="tabCountWant">{{ stats.want_to_read_books if stats else (want_to_read|length if want_to_read else 0) }}</span>
+                    </button>
+                    <button type="button" class="sb-shelf-tab" data-shelf-filter="completed">
+                        <i class="bi bi-check2-circle"></i>
+                        <span>Completed</span>
+                        <span class="sb-shelf-tab-count" id="tabCountCompleted">{{ stats.completed_books if stats else (completed|length if completed else 0) }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ==========================================================================
+                 1. CURRENTLY READING SHELF
+                 ========================================================================== -->
+            <section class="sb-shelf-section" id="sectionCurrentlyReading" data-shelf="currently-reading">
+                <div class="sb-shelf-header">
+                    <div class="sb-shelf-title-wrap">
+                        <div class="sb-shelf-icon reading">
+                            <i class="bi bi-book-half"></i>
+                        </div>
+                        <h2 class="sb-shelf-title">Currently Reading</h2>
+                        <span class="sb-shelf-count" id="countCurrentlyReading">2 books</span>
+                    </div>
+                    <a href="/explore" class="sb-shelf-explore-link">
+                        <i class="bi bi-plus-lg"></i> Add More Books
+                    </a>
+                </div>
+
+                <!-- Grid of Currently Reading Books -->
+                <div class="sb-shelf-grid" id="gridCurrentlyReading">
+                    <!-- Dynamic rendering in JS -->
+                </div>
+
+                <!-- Empty State for Currently Reading -->
+                <div class="sb-shelf-empty" id="emptyCurrentlyReading" style="display: none;">
+                    <i class="bi bi-book-half sb-shelf-empty-icon"></i>
+                    <h3 class="sb-shelf-empty-title">Your next chapter is waiting.</h3>
+                    <p class="sb-shelf-empty-desc">Pick a book from your Want to Read shelf or explore our catalog to start reading.</p>
+                    <a href="/explore" class="btn-shelf-primary" style="max-width: 180px;">
+                        <i class="bi bi-search"></i> Explore Catalog
+                    </a>
+                </div>
+            </section>
+
+            <!-- ==========================================================================
+                 2. WANT TO READ SHELF
+                 ========================================================================== -->
+            <section class="sb-shelf-section" id="sectionWantToRead" data-shelf="want-to-read">
+                <div class="sb-shelf-header">
+                    <div class="sb-shelf-title-wrap">
+                        <div class="sb-shelf-icon want">
+                            <i class="bi bi-bookmark-plus"></i>
+                        </div>
+                        <h2 class="sb-shelf-title">Want to Read</h2>
+                        <span class="sb-shelf-count" id="countWantToRead">3 books</span>
+                    </div>
+                    <a href="/explore" class="sb-shelf-explore-link">
+                        <i class="bi bi-compass"></i> Discover More
+                    </a>
+                </div>
+
+                <!-- Grid of Want to Read Books -->
+                <div class="sb-shelf-grid" id="gridWantToRead">
+                    <!-- Dynamic rendering in JS -->
+                </div>
+
+                <!-- Empty State for Want to Read -->
+                <div class="sb-shelf-empty" id="emptyWantToRead" style="display: none;">
+                    <i class="bi bi-bookmark-plus sb-shelf-empty-icon"></i>
+                    <h3 class="sb-shelf-empty-title">Save a few books for your next reading session.</h3>
+                    <p class="sb-shelf-empty-desc">Discover inspiring titles in our curated library and queue them up for future reading.</p>
+                    <a href="/explore" class="btn-shelf-primary" style="max-width: 180px;">
+                        <i class="bi bi-search"></i> Browse Books
+                    </a>
+                </div>
+            </section>
+
+            <!-- ==========================================================================
+                 3. COMPLETED SHELF
+                 ========================================================================== -->
+            <section class="sb-shelf-section" id="sectionCompleted" data-shelf="completed">
+                <div class="sb-shelf-header">
+                    <div class="sb-shelf-title-wrap">
+                        <div class="sb-shelf-icon completed">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <h2 class="sb-shelf-title">Completed</h2>
+                        <span class="sb-shelf-count" id="countCompleted">1 book</span>
+                    </div>
+                    <span class="text-muted" style="font-size: 0.8rem; font-weight: 500;">
+                        <i class="bi bi-award text-success"></i> Finished Books
+                    </span>
+                </div>
+
+                <!-- Grid of Completed Books -->
+                <div class="sb-shelf-grid" id="gridCompleted">
+                    <!-- Dynamic rendering in JS -->
+                </div>
+
+                <!-- Empty State for Completed -->
+                <div class="sb-shelf-empty" id="emptyCompleted" style="display: none;">
+                    <i class="bi bi-trophy sb-shelf-empty-icon"></i>
+                    <h3 class="sb-shelf-empty-title">Your finished books will appear here.</h3>
+                    <p class="sb-shelf-empty-desc">Keep reading your active books! Once you finish the last page, they will proudly appear here.</p>
+                    <a href="/explore" class="btn-shelf-primary" style="max-width: 180px;">
+                        <i class="bi bi-book"></i> View Books
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     UPDATE READING PROGRESS MODAL
+     ========================================================================== -->
+<div class="modal fade" id="sbProgressModal" tabindex="-1" aria-labelledby="modalProgressTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content sb-modal-content">
+            <div class="modal-header sb-modal-header">
+                <h3 class="modal-title sb-modal-title" id="modalProgressTitle">
+                    <i class="bi bi-bookmark-check text-success me-1"></i> Update Reading Progress
+                </h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body sb-modal-body">
+                <!-- Book Meta Summary -->
+                <div class="sb-progress-modal-meta">
+                    <div class="sb-shelf-thumb" style="width: 60px; height: 86px; min-width: 60px;">
+                        <div id="modalProgCover" class="sb-cover-styled atomic" style="height: 100%;">
+                            <div class="sb-cover-title" style="font-size: 0.65rem;">BOOK</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="h6 fw-bold mb-1" id="modalProgBookTitle">Book Title</h4>
+                        <p class="text-muted mb-0" style="font-size: 0.82rem;" id="modalProgBookAuthor">By Author</p>
+                        <span class="sb-shelf-genre-tag mt-1" id="modalProgBookGenre">Genre</span>
+                    </div>
+                </div>
+
+                <!-- Page Input & Range Slider -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label for="modalProgInput" class="form-label fw-bold mb-0" style="font-size: 0.86rem;">Current Page:</label>
+                        <span class="text-muted" style="font-size: 0.84rem;">
+                            of <strong id="modalProgTotalPages">320</strong> pages (<span id="modalProgPctText">60%</span>)
+                        </span>
+                    </div>
+                    <div class="input-group mb-2">
+                        <input type="number" class="form-control" id="modalProgInput" min="0" max="1000" value="192" style="border-radius: 8px;">
+                        <span class="input-group-text bg-light text-muted" style="font-size: 0.85rem;">pages</span>
+                    </div>
+                    <input type="range" class="form-range" id="modalProgSlider" min="0" max="320" value="192">
+                </div>
+
+                <!-- Quick Increment Buttons -->
+                <div class="mb-2">
+                    <span class="text-muted" style="font-size: 0.76rem; font-weight: 600;">Quick Add Pages:</span>
+                    <div class="sb-quick-add-buttons">
+                        <button type="button" class="btn-quick-add" data-add="10">+10 pages</button>
+                        <button type="button" class="btn-quick-add" data-add="25">+25 pages</button>
+                        <button type="button" class="btn-quick-add" data-add="50">+50 pages</button>
+                        <button type="button" class="btn-quick-add" id="btnFinishBook" style="background-color: #E2F4EC; color: #163E30; border-color: #A3E0C8;">
+                            <i class="bi bi-check2-all"></i> Finished Book!
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer sb-modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="font-size: 0.85rem;">Cancel</button>
+                <button type="button" class="btn btn-shelf-primary" id="btnSaveProgress" style="font-size: 0.85rem; padding: 0.5rem 1.2rem; height: auto;">
+                    <i class="bi bi-check-lg"></i> Save Progress
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     BOOK DETAILS MODAL (My Books View Details)
+     ========================================================================== -->
+<div class="modal fade" id="sbMyBooksDetailsModal" tabindex="-1" aria-labelledby="modalDetailsTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content sb-modal-content">
+            <div class="modal-header sb-modal-header">
+                <h3 class="modal-title sb-modal-title" id="modalDetailsTitle">Book Title</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body sb-modal-body">
+                <div class="sb-modal-grid">
+                    <div class="sb-modal-cover">
+                        <div id="modalDetailsCover" class="sb-cover-styled atomic" style="height: 100%;">
+                            <div class="sb-cover-title">COVER</div>
+                        </div>
+                    </div>
+                    <div class="sb-modal-meta">
+                        <div class="sb-modal-badges">
+                            <span class="sb-rating-badge" id="modalDetailsRating">⭐ 4.9 / 5.0</span>
+                            <span class="sb-explore-genre-tag" id="modalDetailsGenre">Genre</span>
+                            <span class="badge bg-light text-dark border" id="modalDetailsPages">Pages: 320</span>
+                            <span class="badge bg-light text-dark border" id="modalDetailsShelf">Shelf: Currently Reading</span>
+                        </div>
+                        <h4 class="h6 text-muted mb-2" id="modalDetailsAuthor">By Author</h4>
+                        <h5 class="h6 fw-bold text-dark mb-1">Synopsis</h5>
+                        <p class="sb-modal-synopsis" id="modalDetailsSynopsis">Full synopsis and reading notes...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer sb-modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="font-size: 0.85rem;">Close</button>
+                <button type="button" class="btn btn-shelf-primary" id="modalDetailsActionBtn" style="font-size: 0.85rem; padding: 0.5rem 1.2rem; height: auto;">
+                    <i class="bi bi-bookmark-check"></i> Continue Reading
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/my_books.js') if url_for else '/static/js/my_books.js' }}"></script>
+{% endblock %}

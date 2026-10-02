@@ -1,0 +1,52 @@
+/* ==========================================================================
+   SMARTBOOK — DESIGN TOKENS & SYSTEM VARIABLES
+   Editorial Bookstore Aesthetic
+   ========================================================================== */
+
+:root {
+    /* Core Color Palette */
+    --sb-bg-ivory: #F7F5EF;
+    --sb-bg-lavender-grey: #E9EAF2;
+    --sb-bg-white: #FFFFFF;
+    --sb-bg-cream: #FAF8F4;
+    --sb-bg-cream-tint: #F3EFE6;
+
+    --sb-forest-green: #234E3E;
+    --sb-forest-green-hover: #1A3C2F;
+    --sb-forest-green-subtle: #E8F2ED;
+    --sb-forest-green-border: #BCD3C8;
+
+    --sb-charcoal: #252A27;
+    --sb-charcoal-muted: #5A625E;
+    --sb-charcoal-subtle: #8A928E;
+
+    --sb-terracotta: #C87961;
+    --sb-terracotta-hover: #AF5E46;
+    --sb-terracotta-subtle: #FDF3F0;
+    --sb-terracotta-border: #E0BAAE;
+
+    --sb-border-light: #E5E1D5;
+    --sb-border-subtle: #EBE7DC;
+    --sb-border-lavender: #DDDCE8;
+
+    /* Typography */
+    --sb-font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sb-font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+    --sb-font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* Radius */
+    --sb-radius-sm: 8px;
+    --sb-radius-md: 10px;
+    --sb-radius-lg: 20px;
+    --sb-radius-xl: 28px;
+
+    /* Shadows */
+    --sb-shadow-subtle: 0 4px 16px rgba(37, 42, 39, 0.04);
+    --sb-shadow-card: 0 20px 48px -12px rgba(40, 45, 60, 0.08), 0 6px 18px -4px rgba(40, 45, 60, 0.04);
+    --sb-shadow-btn: 0 4px 14px rgba(35, 78, 62, 0.22);
+    --sb-shadow-btn-hover: 0 6px 20px rgba(35, 78, 62, 0.32);
+
+    /* Transitions */
+    --sb-transition-fast: 0.15s ease;
+    --sb-transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}

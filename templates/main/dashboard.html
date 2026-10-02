@@ -1,0 +1,479 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard — SmartBook{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') if url_for else '/static/css/dashboard.css' }}">
+{% endblock %}
+
+{% block content %}
+<div class="sb-dash-layout">
+    <!-- ==========================================================================
+         A. LEFT SIDEBAR (Dark Forest Green #163E30)
+         ========================================================================== -->
+    <aside class="sb-dash-sidebar">
+        <div>
+            <!-- SmartBook Original Approved Brand Logo -->
+            <a href="/" class="sb-dash-brand-wrap" title="SmartBook">
+                <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}" alt="SmartBook Logo" class="sb-dash-brand-logo">
+            </a>
+
+            <!-- Navigation Items -->
+            <ul class="sb-dash-nav">
+                <li>
+                    <a href="/dashboard" class="sb-dash-nav-link active">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/explore" class="sb-dash-nav-link">
+                        <i class="bi bi-search"></i>
+                        <span>Explore Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/my-books" class="sb-dash-nav-link">
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>My Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/wishlist" class="sb-dash-nav-link">
+                        <i class="bi bi-heart"></i>
+                        <span>My Wishlist</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/history" class="sb-dash-nav-link">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Reading History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/profile" class="sb-dash-nav-link">
+                        <i class="bi bi-person"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sb-dash-divider"></div>
+
+            <ul class="sb-dash-nav">
+                <li>
+                    <form action="{{ url_for('auth.logout') if url_for else '/auth/logout' }}" method="POST" class="sb-logout-form m-0 p-0" id="logoutForm">
+                        <button type="submit" class="sb-dash-nav-link logout" title="Log out of SmartBook">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Botanical Stacked Books Illustration -->
+        <div class="sb-dash-sidebar-footer">
+            <img src="/static/images/sidebar-books-art.svg" alt="Botanical Books Illustration" class="sb-dash-sidebar-art">
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+         MAIN VIEWPORT
+         ========================================================================== -->
+    <div class="sb-dash-main">
+        <!-- B. Top Navigation Bar -->
+        <header class="sb-dash-header">
+            <!-- Search Bar -->
+            <div class="sb-dash-search-wrap">
+                <i class="bi bi-search sb-dash-search-icon"></i>
+                <input type="text" class="sb-dash-search-input" id="sbBookSearch" placeholder="Search books, authors, or genres...">
+            </div>
+
+            <!-- User Area -->
+            <div class="sb-dash-user-area">
+                <button type="button" class="sb-dash-notify-btn" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                    <span class="sb-dash-notify-dot"></span>
+                </button>
+
+                <a href="/profile" class="sb-dash-user-profile" title="My Profile" style="text-decoration: none; color: inherit;">
+                    <img src="{{ current_user.avatar_url if current_user and current_user.is_authenticated else 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" alt="{{ current_user.full_name if current_user and current_user.is_authenticated else 'Krushna' }}" class="sb-dash-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Krushna&background=163E30&color=fff'">
+                    <span class="sb-dash-username">{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}</span>
+                    <i class="bi bi-chevron-down ms-1 text-muted" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="sb-dash-body">
+            <!-- C. Clean Welcome Banner Hero (Left Content ~48%, Right Image ~52%) -->
+            <section class="sb-dash-hero-card">
+                <div class="sb-dash-hero-overlay"></div>
+                <div class="sb-dash-hero-content">
+                    <div class="sb-dash-hero-left">
+                        <h1 class="sb-dash-hero-title">
+                            Hello, <span>{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}!</span>
+                        </h1>
+                        <h2 class="sb-dash-hero-subtitle">Ready for your next chapter?</h2>
+                        <p class="sb-dash-hero-desc">
+                            Continue your reading journey and discover books that match your interests.
+                        </p>
+                        <a href="/explore" class="btn-hero-action">
+                            <i class="bi bi-book-half"></i>
+                            <span>Find My Books</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- D. Reading Statistics Row (3 Equal Cards) -->
+            <section class="sb-dash-stats-row">
+                <!-- Want to Read -->
+                <a href="/my-books?shelf=want-to-read" class="sb-stat-card" title="View Want to Read shelf">
+                    <div class="sb-stat-card-left">
+                        <div class="sb-stat-icon-wrap want">
+                            <i class="bi bi-bookmark-plus"></i>
+                        </div>
+                        <div class="sb-stat-info">
+                            <span class="sb-stat-number" id="dashCountWant">{{ stats.want_to_read_books if stats else want_to_read|length }}</span>
+                            <span class="sb-stat-label">Want to Read</span>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right sb-stat-arrow"></i>
+                </a>
+
+                <!-- Currently Reading -->
+                <a href="/my-books?shelf=currently-reading" class="sb-stat-card" title="View Currently Reading shelf">
+                    <div class="sb-stat-card-left">
+                        <div class="sb-stat-icon-wrap reading">
+                            <i class="bi bi-book-half"></i>
+                        </div>
+                        <div class="sb-stat-info">
+                            <span class="sb-stat-number" id="dashCountReading">{{ stats.currently_reading_books if stats else currently_reading|length }}</span>
+                            <span class="sb-stat-label">Currently Reading</span>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right sb-stat-arrow"></i>
+                </a>
+
+                <!-- Completed -->
+                <a href="/my-books?shelf=completed" class="sb-stat-card" title="View Completed shelf">
+                    <div class="sb-stat-card-left">
+                        <div class="sb-stat-icon-wrap completed">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="sb-stat-info">
+                            <span class="sb-stat-number" id="dashCountCompleted">{{ stats.completed_books if stats else completed|length }}</span>
+                            <span class="sb-stat-label">Completed</span>
+                        </div>
+                    </div>
+                    <i class="bi bi-chevron-right sb-stat-arrow"></i>
+                </a>
+            </section>
+
+            <!-- 2-Column Content Area (Left 73% / Right 27%) -->
+            <div class="sb-dash-content-grid">
+                <!-- Main Left Column -->
+                <div class="sb-dash-col-main">
+                    <!-- E. Recommended for You (Dynamic Grid) -->
+                    <section>
+                        <div class="sb-dash-section-header">
+                            <h2 class="sb-dash-section-title">Recommended for You</h2>
+                            <a href="/explore" class="sb-dash-view-all">
+                                <span>View All</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+
+                        <div class="sb-rec-grid" id="sbRecGrid">
+                            {% if recommendations %}
+                                {% for item in recommendations %}
+                                    {% set book = item.book %}
+                                    <div class="sb-rec-card"
+                                         data-book-id="{{ book.id }}"
+                                         data-title="{{ book.title }}"
+                                         data-author="{{ book.author }}"
+                                         data-genre="{{ book.genres[0].name if book.genres else 'General' }}"
+                                         data-rating="{{ book.rating }}"
+                                         data-pages="{{ book.page_count }}"
+                                         data-language="{{ book.language }}"
+                                         data-synopsis="{{ book.description }}"
+                                         data-cover-class="{{ book.cover_class or 'atomic' }}">
+                                        <div>
+                                            <div class="sb-rec-card-top action-open-dash-details" style="cursor: pointer;">
+                                                <div class="sb-book-thumb">
+                                                    <div class="sb-cover-styled {{ book.cover_class or 'atomic' }}">
+                                                        <div class="sb-cover-title">{{ book.cover_title or book.title }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="sb-rec-card-details">
+                                                    <span class="sb-rec-badge">{{ item.score }}% Match</span>
+                                                    <h3 class="sb-rec-title" title="{{ book.title }}">{{ book.title }}</h3>
+                                                    <span class="sb-rec-author">{{ book.author }}</span>
+                                                    <span class="sb-genre-chip {{ 'tech' if book.genres and book.genres[0].name == 'Technology' else ('fiction' if book.genres and book.genres[0].name == 'Fiction' else '') }}">{{ book.genres[0].name if book.genres else 'General' }}</span>
+                                                </div>
+                                            </div>
+                                            <p class="sb-rec-reason">{{ item.reason }}</p>
+                                        </div>
+                                        <div class="sb-rec-actions">
+                                            <button type="button" class="btn-add-lib" data-book="{{ book.title }}" data-book-id="{{ book.id }}">
+                                                <i class="bi bi-plus"></i> Add to Library
+                                            </button>
+                                            <button type="button" class="btn-wish-icon" data-book="{{ book.title }}" data-book-id="{{ book.id }}" title="Add to Wishlist">
+                                                <i class="bi bi-heart"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="p-4 text-center bg-white rounded-3 border w-100" style="grid-column: 1 / -1;">
+                                    <p class="text-muted mb-2">No recommendations available for the current filter.</p>
+                                    <a href="/explore" class="btn btn-sm btn-hero-action">Explore Catalog</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
+
+                    <!-- G. Continue Reading (Dynamic Grid) -->
+                    <section>
+                        <div class="sb-dash-section-header">
+                            <h2 class="sb-dash-section-title">Continue Reading</h2>
+                            <a href="/my-books?shelf=currently-reading" class="sb-dash-view-all">
+                                <span>View All</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+
+                        <div class="sb-prog-grid" id="sbProgGrid">
+                            {% if currently_reading %}
+                                {% for ub in currently_reading %}
+                                    {% set pct = ((ub.current_page / ub.book.page_count) * 100)|round|int if ub.book.page_count else 0 %}
+                                    <div class="sb-prog-card">
+                                        <div class="sb-book-thumb action-open-dash-details" data-book-id="{{ ub.book.id }}" style="width: 48px; height: 68px; min-width: 48px; cursor: pointer;">
+                                            <div class="sb-cover-styled {{ ub.book.cover_class or 'deepwork' }}">
+                                                <div class="sb-cover-title" style="font-size: 0.52rem;">{{ ub.book.cover_title or ub.book.title }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="sb-prog-card-info">
+                                            <h3 class="sb-prog-title action-open-dash-details" data-book-id="{{ ub.book.id }}" title="{{ ub.book.title }}" style="cursor: pointer;">{{ ub.book.title }}</h3>
+                                            <div class="sb-prog-author">{{ ub.book.author }}</div>
+                                            <div class="sb-progress-bar-wrap">
+                                                <div class="sb-progress-track">
+                                                    <div class="sb-progress-fill" style="width: {{ pct }}%;"></div>
+                                                </div>
+                                                <span class="sb-progress-percent">{{ pct }}%</span>
+                                            </div>
+                                            <div class="sb-prog-pages">Page {{ ub.current_page }} of {{ ub.book.page_count }}</div>
+                                            <a href="/my-books?shelf=currently-reading" class="btn-continue">
+                                                <span>Continue</span>
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="p-3 text-center bg-white rounded-3 border w-100" style="grid-column: 1 / -1;">
+                                    <p class="text-muted mb-2" style="font-size: 0.88rem;">You have no books in progress right now.</p>
+                                    <a href="/explore" class="btn btn-sm btn-outline-success" style="font-size: 0.82rem; border-radius: 8px;">Find Books to Read</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
+                </div>
+
+                <!-- F. Right Information Column -->
+                <div class="sb-dash-col-side">
+                    <!-- Panel 1: Reading Preferences -->
+                    <div class="sb-side-card">
+                        <div class="sb-side-card-header">
+                            <h3 class="sb-side-card-title">
+                                <i class="bi bi-sliders2"></i>
+                                <span>Reading Preferences</span>
+                            </h3>
+                            <button type="button" class="btn p-0 border-0 bg-transparent text-muted" id="btnGearPreferences" title="Edit Preferences">
+                                <i class="bi bi-gear sb-side-card-gear"></i>
+                            </button>
+                        </div>
+                        <p class="sb-side-card-desc">Your interests help us recommend better books.</p>
+
+                        <div class="sb-pref-chips-wrap" id="dashPrefChipsWrap">
+                            {% if current_user.preference and current_user.preference.preferred_genres %}
+                                {% for genre in current_user.preference.preferred_genres %}
+                                    <span class="sb-pref-chip c{{ (loop.index0 % 6) + 1 }}">{{ genre.name }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="sb-pref-chip c1">Technology</span>
+                                <span class="sb-pref-chip c2">Self-Help</span>
+                                <span class="sb-pref-chip c3">Fiction</span>
+                            {% endif %}
+                        </div>
+
+                        <button type="button" class="btn-edit-pref w-100 border-0" id="btnOpenEditPreferences">
+                            <span>Edit Preferences</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Panel 2: Recent Activity -->
+                    <div class="sb-side-card">
+                        <div class="sb-side-card-header">
+                            <h3 class="sb-side-card-title">
+                                <i class="bi bi-clock"></i>
+                                <span>Recent Activity</span>
+                            </h3>
+                            <a href="/history" class="sb-dash-view-all" style="font-size: 0.74rem;">
+                                <span>View All</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+
+                        <div class="sb-activity-list mt-2">
+                            {% if recent_history %}
+                                {% for rh in recent_history %}
+                                    <div class="sb-activity-item">
+                                        <div class="sb-activity-thumb">
+                                            <div class="sb-cover-styled {{ rh.book.cover_class or 'atomic' if rh.book else 'atomic' }}" style="padding: 2px;">
+                                                <div class="sb-cover-title" style="font-size: 0.42rem;">{{ (rh.book.title[:8] + '..') if rh.book else 'BOOK' }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="sb-activity-info">
+                                            <p class="sb-activity-text">{{ rh.details }}</p>
+                                            <div class="sb-activity-time">{{ rh.created_at.strftime('%b %d, %Y') }}</div>
+                                        </div>
+                                        <a href="/history" class="text-muted" title="View details"><i class="bi bi-chevron-right" style="font-size: 0.75rem;"></i></a>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted text-center py-2" style="font-size: 0.82rem;">No reading activity recorded yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     EDIT READING PREFERENCES MODAL
+     ========================================================================== -->
+<div class="modal fade" id="sbPreferencesModal" tabindex="-1" aria-labelledby="modalPrefTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content sb-modal-content">
+            <div class="modal-header sb-modal-header">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="sb-confirm-icon-wrap" style="width: 36px; height: 36px; font-size: 1.1rem; background: #E8F2ED; color: #234E3E; border-radius: 10px;">
+                        <i class="bi bi-sliders2"></i>
+                    </div>
+                    <h3 class="modal-title sb-modal-title mb-0" id="modalPrefTitle">Edit Reading Preferences</h3>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body sb-modal-body p-4">
+                <p class="text-muted mb-3" style="font-size: 0.9rem;">
+                    Customize your favorite genres, preferred language, and reading pacing. Our recommendation engine immediately updates your suggestions based on these settings.
+                </p>
+
+                <!-- 1. Preferred Genres Multi-Select -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark" style="font-size: 0.92rem;">
+                        Preferred Genres <span class="text-muted fw-normal">(Click to toggle)</span>
+                    </label>
+                    <div class="d-flex flex-wrap gap-2" id="modalGenreChipsContainer">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <!-- 2. Preferred Language -->
+                    <div class="col-md-4">
+                        <label for="prefModalLang" class="form-label fw-bold text-dark" style="font-size: 0.92rem;">Preferred Language</label>
+                        <select class="form-select sb-explore-select w-100" id="prefModalLang">
+                            <option value="English">English</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="German">German</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="French">French</option>
+                        </select>
+                    </div>
+
+                    <!-- 3. Reading Duration -->
+                    <div class="col-md-4">
+                        <label for="prefModalDuration" class="form-label fw-bold text-dark" style="font-size: 0.92rem;">Reading Length</label>
+                        <select class="form-select sb-explore-select w-100" id="prefModalDuration">
+                            <option value="Any">Any Length</option>
+                            <option value="Short">Short (&lt; 250 pages)</option>
+                            <option value="Medium">Medium (250–450 pages)</option>
+                            <option value="Long">Long (&gt; 450 pages)</option>
+                        </select>
+                    </div>
+
+                    <!-- 4. Reading Goal -->
+                    <div class="col-md-4">
+                        <label for="prefModalGoal" class="form-label fw-bold text-dark" style="font-size: 0.92rem;">Annual Goal (Books)</label>
+                        <input type="number" class="form-control" id="prefModalGoal" min="1" max="365" value="24" style="border-radius: 10px; font-size: 0.9rem; padding: 0.55rem 0.85rem;">
+                    </div>
+                </div>
+
+                <!-- 5. Reading Interests / Bio Keywords -->
+                <div class="mb-3">
+                    <label for="prefModalInterests" class="form-label fw-bold text-dark" style="font-size: 0.92rem;">Reading Topics & Interests</label>
+                    <textarea class="form-control" id="prefModalInterests" rows="3" placeholder="e.g. Behavioral psychology, technological innovation, speculative fiction, leadership..." style="border-radius: 10px; font-size: 0.9rem;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer sb-modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="font-size: 0.88rem; border-radius: 10px;">Cancel</button>
+                <button type="button" class="btn btn-hero-action" id="btnSavePreferences" style="font-size: 0.88rem; padding: 0.55rem 1.4rem;">
+                    <i class="bi bi-check2"></i> Save Preferences
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     DASHBOARD BOOK DETAILS MODAL
+     ========================================================================== -->
+<div class="modal fade" id="sbDashBookModal" tabindex="-1" aria-labelledby="dashModalBookTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content sb-modal-content">
+            <div class="modal-header sb-modal-header">
+                <h3 class="modal-title sb-modal-title" id="dashModalBookTitle">Book Title</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body sb-modal-body">
+                <div class="sb-modal-grid">
+                    <div class="sb-modal-cover">
+                        <div id="dashModalBookCover" class="sb-cover-styled atomic" style="height: 100%;">
+                            <div class="sb-cover-title">COVER</div>
+                        </div>
+                    </div>
+                    <div class="sb-modal-meta">
+                        <div class="sb-modal-badges">
+                            <span class="sb-rating-badge" id="dashModalBookRating">⭐ 4.9 / 5.0</span>
+                            <span class="sb-explore-genre-tag" id="dashModalBookGenre">Self-Help</span>
+                            <span class="badge bg-light text-dark border" id="dashModalBookLang">Language: English</span>
+                            <span class="badge bg-light text-dark border" id="dashModalBookPages">Pages: 320</span>
+                        </div>
+                        <h4 class="h6 text-muted mb-2" id="dashModalBookAuthor">By James Clear</h4>
+                        <h5 class="h6 fw-bold text-dark mb-1">Synopsis</h5>
+                        <p class="sb-modal-synopsis" id="dashModalBookSynopsis">Full description text...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer sb-modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="font-size: 0.85rem;">Close</button>
+                <button type="button" class="btn btn-hero-action" id="dashModalAddBtn" style="font-size: 0.85rem;">
+                    <i class="bi bi-plus-lg"></i> Add to My Books
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') if url_for else '/static/js/dashboard.js' }}"></script>
+{% endblock %}

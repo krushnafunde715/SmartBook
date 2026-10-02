@@ -1,0 +1,710 @@
+/* ==========================================================================
+   SMARTBOOK — AUTHENTICATION & LANDING STYLES
+   Editorial Bookstore Aesthetic & Layered Atmospheric Library Hero
+   ========================================================================== */
+
+/* ==========================================================================
+   ATMOSPHERIC LIBRARY LANDING PAGE
+   Layered design matching underlying background typography & controls
+   ========================================================================== */
+
+.sb-hero-viewport {
+    min-height: 100vh;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    background: #F7F5EF url('../images/landing_hero_bg.jpg') center center / cover no-repeat;
+    display: flex;
+    align-items: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Subtle Layered Blend Overlay — Blurs background typography to 14px with 10-15% soft opacity */
+.sb-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(247, 245, 239, 0.88) 0%,
+        rgba(247, 245, 239, 0.84) 30%,
+        rgba(247, 245, 239, 0.48) 46%,
+        rgba(247, 245, 239, 0.12) 58%,
+        rgba(247, 245, 239, 0) 72%
+    );
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 36%, rgba(0, 0, 0, 0) 60%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 36%, rgba(0, 0, 0, 0) 60%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Left Content Area (Aligned to left 8.4% reference coordinate) */
+.sb-hero-content-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0;
+    padding: clamp(2rem, 10vh, 5.5rem) 2rem clamp(2rem, 8vh, 4rem) clamp(1.75rem, 8.4vw, 8.4vw);
+    display: flex;
+    align-items: center;
+}
+
+.sb-hero-card {
+    width: 100%;
+    max-width: clamp(340px, 32vw, 620px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* 2. Brand & Logo (Sufficient width, zero clipping, sharp visibility) */
+.sb-hero-logo-wrap {
+    margin-bottom: clamp(24px, 5.5vh, 48px);
+    display: inline-block;
+    max-width: 100%;
+    overflow: visible;
+    transition: transform var(--sb-transition-fast);
+}
+
+.sb-hero-logo-wrap:hover {
+    transform: translateY(-1px);
+}
+
+.sb-hero-logo {
+    width: clamp(230px, 27vw, 290px);
+    height: auto;
+    max-width: 100%;
+    display: block;
+    overflow: visible;
+    filter: drop-shadow(0 2px 8px rgba(35, 78, 62, 0.12));
+}
+
+/* 3. Main Heading (Aligned directly over background typography) */
+.sb-hero-heading {
+    font-family: var(--sb-font-serif);
+    font-size: clamp(40px, 4.4vw, 68px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: var(--sb-forest-green);
+    margin: 0 0 clamp(8px, 1.8vh, 16px) 0;
+    max-width: 620px;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85);
+}
+
+.sb-hero-brand-highlight {
+    color: var(--sb-terracotta);
+    display: block;
+}
+
+/* Terracotta Accent Line */
+.sb-hero-accent-line {
+    width: clamp(44px, 4.8vw, 64px);
+    height: 4px;
+    background-color: var(--sb-terracotta);
+    border-radius: 2px;
+    margin-bottom: clamp(20px, 4.2vh, 42px);
+    box-shadow: 0 1px 2px rgba(200, 121, 97, 0.3);
+}
+
+/* 4. Authentication Action Area (Aligned directly over background buttons) */
+.sb-hero-actions {
+    width: 100%;
+    max-width: clamp(260px, 25.4vw, 440px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Login Button (Forest Green solid) */
+.btn-hero-login {
+    background-color: var(--sb-forest-green);
+    border: 1px solid var(--sb-forest-green);
+    color: #FFFFFF !important;
+    font-family: var(--sb-font-body);
+    font-weight: 600;
+    font-size: clamp(16px, 1.35vw, 22px);
+    width: 100%;
+    height: clamp(48px, 7.5vh, 68px);
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 16px rgba(35, 78, 62, 0.30);
+    transition: all var(--sb-transition-smooth);
+    text-decoration: none;
+}
+
+.btn-hero-login:hover, .btn-hero-login:focus {
+    background-color: var(--sb-forest-green-hover);
+    border-color: var(--sb-forest-green-hover);
+    color: #FFFFFF !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(35, 78, 62, 0.40);
+}
+
+/* Supporting Text */
+.sb-hero-switch-text {
+    font-family: var(--sb-font-body);
+    font-size: clamp(14px, 1.1vw, 18px);
+    color: var(--sb-charcoal);
+    text-align: center;
+    width: 100%;
+    margin-top: clamp(10px, 2vh, 20px);
+    margin-bottom: clamp(8px, 1.5vh, 12px);
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+}
+
+/* Create Account Button (Soft cream with terracotta border) */
+.btn-hero-register {
+    background-color: rgba(250, 247, 238, 0.94);
+    border: 1.5px solid var(--sb-terracotta);
+    color: #8D4632 !important;
+    font-family: var(--sb-font-body);
+    font-weight: 600;
+    font-size: clamp(15px, 1.25vw, 20px);
+    width: 100%;
+    height: clamp(48px, 7.5vh, 64px);
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all var(--sb-transition-smooth);
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(200, 121, 97, 0.15);
+}
+
+.btn-hero-register:hover, .btn-hero-register:focus {
+    background-color: #F8F2E8;
+    border-color: var(--sb-terracotta-hover);
+    color: #6E3220 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(200, 121, 97, 0.25);
+}
+
+/* ==========================================================================
+   AUTHENTICATION SPLIT-SCREEN PAGES (Login & Register)
+   ========================================================================== */
+
+.sb-auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--sb-bg-lavender-grey);
+    padding: 2.5rem 1.25rem;
+}
+
+.sb-auth-container {
+    background-color: var(--sb-bg-white);
+    border-radius: var(--sb-radius-xl);
+    border: 1px solid var(--sb-border-lavender);
+    box-shadow: var(--sb-shadow-card);
+    width: 100%;
+    max-width: 1040px;
+    padding: 2.25rem 2.5rem;
+    margin: 0 auto;
+    position: relative;
+    transition: all var(--sb-transition-smooth);
+}
+
+.sb-auth-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid #F1EFF6;
+}
+
+.sb-auth-brand {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    transition: opacity var(--sb-transition-fast);
+}
+
+.sb-auth-brand:hover {
+    opacity: 0.9;
+}
+
+.sb-auth-switch {
+    font-size: 0.9rem;
+    color: var(--sb-charcoal-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.sb-auth-switch-btn {
+    color: var(--sb-forest-green);
+    font-family: var(--sb-font-heading);
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-decoration: none;
+    padding: 0.4rem 0.95rem;
+    border-radius: var(--sb-radius-sm);
+    background-color: var(--sb-bg-cream);
+    border: 1px solid var(--sb-border-light);
+    transition: all var(--sb-transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.sb-auth-switch-btn:hover {
+    background-color: var(--sb-forest-green);
+    border-color: var(--sb-forest-green);
+    color: var(--sb-bg-white);
+    transform: translateY(-1px);
+}
+
+.sb-auth-form-surface {
+    background-color: var(--sb-bg-cream);
+    border: 1px solid var(--sb-border-subtle);
+    border-radius: var(--sb-radius-lg);
+    padding: 2.25rem 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.sb-auth-title {
+    font-family: var(--sb-font-heading);
+    font-weight: 800;
+    font-size: 1.85rem;
+    color: var(--sb-charcoal);
+    margin-bottom: 0.35rem;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+.sb-auth-subtitle {
+    color: var(--sb-charcoal-muted);
+    font-size: 0.925rem;
+    margin-bottom: 1.75rem;
+    line-height: 1.45;
+}
+
+.sb-password-wrap {
+    position: relative;
+}
+
+.sb-password-toggle {
+    position: absolute;
+    right: 0.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent !important;
+    color: var(--sb-charcoal-subtle);
+    padding: 0.35rem 0.65rem;
+    font-size: 1.05rem;
+    line-height: 1;
+    z-index: 5;
+    cursor: pointer;
+    transition: color var(--sb-transition-fast);
+}
+
+.sb-password-toggle:hover {
+    color: var(--sb-charcoal);
+}
+
+.sb-auth-visual-surface {
+    background: linear-gradient(145deg, #F6F4ED 0%, #EFEBE0 100%);
+    border: 1px solid var(--sb-border-subtle);
+    border-radius: var(--sb-radius-lg);
+    padding: 2.25rem 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.sb-auth-illustration {
+    max-width: 100%;
+    height: auto;
+    max-height: 290px;
+    filter: drop-shadow(0 6px 16px rgba(40, 91, 73, 0.06));
+}
+
+.sb-auth-mobile-switch {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--sb-charcoal-muted);
+    margin-top: 1.25rem;
+}
+
+.sb-auth-mobile-switch a {
+    color: var(--sb-terracotta);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   LIBRARY ATMOSPHERE LOGIN PAGE (Design Locked)
+   Matches exact layout: full-screen library, ivory overlay, large Welcome Back heading
+   ========================================================================== */
+
+.sb-login-viewport {
+    min-height: 100vh;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    background: #F7F5EF url('../images/landing_hero_bg.jpg') center center / cover no-repeat;
+    display: flex;
+    align-items: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Smooth Ivory Gradient Overlay on Left Side */
+.sb-login-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(247, 245, 239, 0.98) 0%,
+        rgba(247, 245, 239, 0.95) 34%,
+        rgba(247, 245, 239, 0.78) 48%,
+        rgba(247, 245, 239, 0.20) 64%,
+        rgba(247, 245, 239, 0) 78%
+    );
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 68%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 68%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Left Content Wrapper (~42% viewport width) */
+.sb-login-content-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0;
+    padding: clamp(2.5rem, 8vh, 4.5rem) 2rem clamp(2.5rem, 8vh, 4rem) clamp(2rem, 7vw, 6.5rem);
+    display: flex;
+    align-items: center;
+}
+
+.sb-login-card {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Logo (~360px wide, maintaining aspect ratio) */
+.sb-login-logo-wrap {
+    margin-bottom: clamp(18px, 3.5vh, 32px);
+    display: inline-block;
+    max-width: 100%;
+    overflow: visible;
+    transition: transform var(--sb-transition-fast);
+}
+
+.sb-login-logo-wrap:hover {
+    transform: translateY(-1px);
+}
+
+.sb-login-logo {
+    width: clamp(260px, 25vw, 360px);
+    height: auto;
+    max-width: 100%;
+    display: block;
+    overflow: visible;
+    filter: drop-shadow(0 2px 8px rgba(35, 78, 62, 0.12));
+}
+
+/* Heading: Welcome Back (68–76px on desktop) */
+.sb-login-heading {
+    font-family: var(--sb-font-serif);
+    font-size: clamp(48px, 5vw, 72px);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+    color: var(--sb-forest-green);
+    margin: 0 0 14px 0;
+}
+
+.sb-login-heading-accent {
+    color: var(--sb-terracotta);
+}
+
+.sb-register-subtitle {
+    font-family: var(--sb-font-body);
+    font-size: 16px;
+    color: var(--sb-charcoal-muted);
+    margin: 0 0 14px 0;
+    font-weight: 500;
+}
+
+.sb-login-accent-line {
+    width: 64px;
+    height: 4px;
+    background-color: var(--sb-terracotta);
+    border-radius: 2px;
+    margin-bottom: clamp(22px, 3.5vh, 32px);
+    box-shadow: 0 1px 2px rgba(200, 121, 97, 0.3);
+}
+
+/* Form Controls (500px width) */
+.sb-login-form {
+    width: 100%;
+    max-width: 500px;
+}
+
+.sb-login-label {
+    font-family: var(--sb-font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--sb-charcoal);
+    margin-bottom: 6px;
+}
+
+.sb-login-input {
+    font-family: var(--sb-font-body);
+    font-size: 16px;
+    padding: 0.85rem 1.1rem;
+    height: 52px;
+    border: 1.5px solid #DDD8CE;
+    border-radius: 10px;
+    background-color: #FFFFFF;
+    color: var(--sb-charcoal);
+    transition: all var(--sb-transition-fast);
+}
+
+.sb-login-input:focus {
+    border-color: var(--sb-forest-green);
+    box-shadow: 0 0 0 3.5px rgba(40, 91, 73, 0.14);
+    background-color: #FFFFFF;
+    outline: none;
+}
+
+.sb-login-checkbox {
+    border-color: #DDD8CE;
+    cursor: pointer;
+}
+
+.sb-login-checkbox:checked {
+    background-color: var(--sb-forest-green);
+    border-color: var(--sb-forest-green);
+}
+
+.sb-login-check-label {
+    font-family: var(--sb-font-body);
+    font-size: 15px;
+    color: var(--sb-charcoal-muted);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.sb-login-forgot-link {
+    font-family: var(--sb-font-body);
+    color: var(--sb-terracotta);
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: color var(--sb-transition-fast);
+}
+
+.sb-login-forgot-link:hover {
+    color: var(--sb-terracotta-hover);
+    text-decoration: underline;
+}
+
+/* Primary Log In Button (~68px high) */
+.btn-login-primary {
+    background-color: var(--sb-forest-green);
+    border: 1px solid var(--sb-forest-green);
+    color: #FFFFFF !important;
+    font-family: var(--sb-font-body);
+    font-weight: 600;
+    font-size: 22px;
+    width: 100%;
+    height: 68px;
+    min-height: 68px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 16px rgba(40, 91, 73, 0.30);
+    transition: all var(--sb-transition-smooth);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-login-primary:hover, .btn-login-primary:focus {
+    background-color: var(--sb-forest-green-hover);
+    border-color: var(--sb-forest-green-hover);
+    color: #FFFFFF !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(40, 91, 73, 0.40);
+}
+
+/* Supporting Navigation Links */
+.sb-login-switch-text {
+    font-family: var(--sb-font-body);
+    font-size: 16px;
+    color: var(--sb-charcoal-muted);
+    text-align: center;
+    margin-top: 14px;
+    font-weight: 500;
+}
+
+.sb-login-switch-link {
+    color: var(--sb-terracotta);
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+.sb-login-switch-link:hover {
+    color: var(--sb-terracotta-hover);
+    text-decoration: underline;
+}
+
+.sb-login-back-wrap {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.sb-login-back-link {
+    font-family: var(--sb-font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--sb-forest-green);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: color var(--sb-transition-fast);
+}
+
+.sb-login-back-link:hover {
+    color: var(--sb-forest-green-hover);
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+    .sb-hero-viewport, .sb-login-viewport {
+        background-position: 70% center;
+    }
+    .sb-hero-overlay, .sb-login-overlay {
+        background: linear-gradient(
+            90deg,
+            rgba(247, 245, 239, 0.95) 0%,
+            rgba(247, 245, 239, 0.88) 55%,
+            rgba(247, 245, 239, 0.45) 85%,
+            rgba(247, 245, 239, 0.20) 100%
+        );
+    }
+    .sb-hero-content-wrapper, .sb-login-content-wrapper {
+        padding: 3rem 1.5rem;
+    }
+    .sb-hero-heading, .sb-login-heading {
+        font-size: 52px;
+    }
+    .sb-auth-container {
+        padding: 1.75rem 1.5rem;
+        border-radius: var(--sb-radius-lg);
+    }
+    .sb-auth-visual-surface {
+        margin-top: 1rem;
+        min-height: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sb-hero-viewport, .sb-login-viewport {
+        padding: 2.5rem 0;
+        background-position: 80% center;
+        height: auto;
+        min-height: 100vh;
+    }
+    .sb-hero-overlay, .sb-login-overlay {
+        background: rgba(247, 245, 239, 0.94);
+    }
+    .sb-hero-content-wrapper, .sb-login-content-wrapper {
+        padding: 2rem 1.25rem;
+    }
+    .sb-hero-card, .sb-login-card {
+        max-width: 100%;
+    }
+    .sb-hero-logo, .sb-login-logo {
+        width: clamp(200px, 62vw, 260px);
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+    .sb-hero-logo-wrap, .sb-login-logo-wrap {
+        margin-bottom: 24px;
+        overflow: visible;
+    }
+    .sb-hero-heading, .sb-login-heading {
+        font-size: clamp(34px, 8vw, 48px);
+        margin-bottom: 12px;
+    }
+    .sb-hero-accent-line, .sb-login-accent-line {
+        margin-bottom: 24px;
+    }
+    .btn-hero-login, .btn-login-primary {
+        width: 100%;
+        max-width: 500px;
+        height: 56px;
+        min-height: 56px;
+        font-size: 18px;
+        padding: 0.85rem 1.25rem;
+    }
+    .btn-hero-register {
+        width: 100%;
+        max-width: 440px;
+        height: 52px;
+        font-size: 17px;
+        padding: 0.82rem 1.25rem;
+    }
+    .sb-hero-switch-text, .sb-login-switch-text {
+        font-size: 15px;
+        margin-top: 14px;
+        margin-bottom: 10px;
+    }
+    .sb-auth-page {
+        padding: 1.25rem 0.75rem;
+    }
+    .sb-auth-container {
+        padding: 1.25rem 1rem;
+        border-radius: var(--sb-radius-md);
+    }
+    .sb-auth-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+    .sb-auth-form-surface {
+        padding: 1.5rem 1.15rem;
+        border-radius: var(--sb-radius-md);
+    }
+    .sb-auth-title {
+        font-size: 1.55rem;
+    }
+}

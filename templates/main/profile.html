@@ -1,0 +1,527 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile — SmartBook{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') if url_for else '/static/css/dashboard.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') if url_for else '/static/css/explore.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') if url_for else '/static/css/profile.css' }}">
+{% endblock %}
+
+{% block content %}
+<div class="sb-dash-layout">
+    <!-- ==========================================================================
+         A. LEFT SIDEBAR (Dark Forest Green #163E30)
+         ========================================================================== -->
+    <aside class="sb-dash-sidebar">
+        <div>
+            <!-- SmartBook Original Approved Brand Logo -->
+            <a href="/" class="sb-dash-brand-wrap" title="SmartBook">
+                <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}" alt="SmartBook Logo" class="sb-dash-brand-logo">
+            </a>
+
+            <!-- Navigation Items -->
+            <ul class="sb-dash-nav">
+                <li>
+                    <a href="/dashboard" class="sb-dash-nav-link">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/explore" class="sb-dash-nav-link">
+                        <i class="bi bi-search"></i>
+                        <span>Explore Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/my-books" class="sb-dash-nav-link">
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>My Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/wishlist" class="sb-dash-nav-link">
+                        <i class="bi bi-heart"></i>
+                        <span>My Wishlist</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/history" class="sb-dash-nav-link">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Reading History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/profile" class="sb-dash-nav-link active">
+                        <i class="bi bi-person-fill"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sb-dash-divider"></div>
+
+            <ul class="sb-dash-nav">
+                <li>
+                    <form action="{{ url_for('auth.logout') if url_for else '/auth/logout' }}" method="POST" class="sb-logout-form m-0 p-0" id="logoutForm">
+                        <button type="submit" class="sb-dash-nav-link logout" title="Log out of SmartBook">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Botanical Stacked Books Illustration -->
+        <div class="sb-dash-sidebar-footer">
+            <img src="/static/images/sidebar-books-art.svg" alt="Botanical Books Illustration" class="sb-dash-sidebar-art">
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+         MAIN VIEWPORT
+         ========================================================================== -->
+    <div class="sb-dash-main">
+        <!-- Top Navigation Bar -->
+        <header class="sb-dash-header">
+            <!-- Global Search Bar -->
+            <div class="sb-dash-search-wrap">
+                <i class="bi bi-search sb-dash-search-icon"></i>
+                <input type="text" class="sb-dash-search-input" id="sbTopSearch" placeholder="Search your books, reading notes or profile...">
+            </div>
+
+            <!-- Header Quick Navigation Tabs -->
+            <div class="sb-header-quick-tabs d-none d-xl-flex align-items-center gap-2">
+                <a href="/my-books?shelf=all" class="sb-quick-nav-pill"><i class="bi bi-collection me-1"></i> All Shelves</a>
+                <a href="/my-books?shelf=currently-reading" class="sb-quick-nav-pill"><i class="bi bi-book-half me-1"></i> Currently Reading</a>
+                <a href="/my-books?shelf=want-to-read" class="sb-quick-nav-pill"><i class="bi bi-bookmark-plus me-1"></i> Want to Read</a>
+                <a href="/my-books?shelf=completed" class="sb-quick-nav-pill"><i class="bi bi-check2-circle me-1"></i> Completed</a>
+            </div>
+
+            <!-- User Area -->
+            <div class="sb-dash-user-area">
+                <button type="button" class="sb-dash-notify-btn" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                    <span class="sb-dash-notify-dot"></span>
+                </button>
+
+                <a href="/profile" class="sb-dash-user-profile" title="My Profile" style="text-decoration: none; color: inherit;">
+                    <img src="{{ current_user.avatar_url if current_user and current_user.is_authenticated else 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" alt="{{ current_user.full_name if current_user and current_user.is_authenticated else 'Krushna' }}" class="sb-dash-avatar" id="navAvatarImg" onerror="this.src='https://ui-avatars.com/api/?name=Krushna&background=163E30&color=fff'">
+                    <span class="sb-dash-username" id="navUsername">{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}</span>
+                    <i class="bi bi-chevron-down ms-1 text-muted" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Body Content -->
+        <main class="sb-dash-body">
+            <!-- Page Header Banner -->
+            <div class="sb-profile-header">
+                <div class="sb-profile-header-text">
+                    <h1 class="sb-profile-title">My Profile</h1>
+                    <p class="sb-profile-subtitle">Manage your personal information and account settings.</p>
+                </div>
+                <div class="sb-profile-header-art">
+                    <img src="/static/images/books-illustration.svg" alt="Decorative Plant and Book Illustration" class="sb-profile-art-img" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <!-- Profile Summary Card -->
+            <section class="sb-card sb-profile-summary-card">
+                <div class="sb-summary-inner">
+                    <div class="sb-summary-avatar-wrap">
+                        <div class="sb-avatar-container">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=80" alt="Krushna Patel" class="sb-profile-avatar-large" id="profileSummaryAvatar" onerror="this.src='https://ui-avatars.com/api/?name=Krushna+Patel&background=163E30&color=fff&size=160'">
+                            <button type="button" class="sb-avatar-edit-badge" title="Change Profile Photo" id="btnChangeAvatar">
+                                <i class="bi bi-camera-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="sb-summary-content">
+                        <div class="sb-summary-header-row">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                    <h2 class="sb-summary-name" id="summaryFullName">Krushna Patel</h2>
+                                    <span class="sb-reader-badge">
+                                        <i class="bi bi-award-fill"></i> Voracious Reader • Level 4
+                                    </span>
+                                </div>
+                                <div class="sb-summary-meta">
+                                    <span class="sb-summary-meta-item" id="summaryEmail">
+                                        <i class="bi bi-envelope"></i> krushna.patel@example.com
+                                    </span>
+                                    <span class="sb-summary-meta-dot">•</span>
+                                    <span class="sb-summary-meta-item">
+                                        <i class="bi bi-calendar3"></i> Member since January 2025
+                                    </span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-profile-secondary" id="btnFocusEdit">
+                                <i class="bi bi-pencil-square"></i> Edit Profile
+                            </button>
+                        </div>
+
+                        <p class="sb-summary-bio" id="summaryBioText">
+                            Avid reader exploring behavioral psychology, technological craftsmanship, and speculative fiction. Currently pursuing a 24-books-a-year reading challenge.
+                        </p>
+
+                        <!-- Quick Reading Library Stats -->
+                        <div class="sb-profile-stats-strip">
+                            <div class="sb-profile-stat-box">
+                                <span class="sb-profile-stat-value" id="statTotalBooks">12</span>
+                                <span class="sb-profile-stat-label">Books in Library</span>
+                            </div>
+                            <div class="sb-profile-stat-divider"></div>
+                            <div class="sb-profile-stat-box">
+                                <span class="sb-profile-stat-value" id="statCompletedBooks">8</span>
+                                <span class="sb-profile-stat-label">Finished</span>
+                            </div>
+                            <div class="sb-profile-stat-divider"></div>
+                            <div class="sb-profile-stat-box">
+                                <span class="sb-profile-stat-value" id="statActiveBooks">3</span>
+                                <span class="sb-profile-stat-label">Currently Reading</span>
+                            </div>
+                            <div class="sb-profile-stat-divider"></div>
+                            <div class="sb-profile-stat-box">
+                                <span class="sb-profile-stat-value" id="statPagesRead">1,240</span>
+                                <span class="sb-profile-stat-label">Pages Read</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Form Layout: 2-Column Responsive Grid -->
+            <form id="profileMainForm" novalidate>
+                <div class="sb-profile-grid">
+                    <!-- ==========================================================
+                         LEFT COLUMN: Personal Information Card
+                         ========================================================== -->
+                    <div class="sb-profile-col">
+                        <section class="sb-card sb-form-section-card" id="cardPersonalInfo">
+                            <div class="sb-card-header">
+                                <div class="sb-card-header-icon green">
+                                    <i class="bi bi-person-vcard"></i>
+                                </div>
+                                <div>
+                                    <h3 class="sb-card-title">Personal Information</h3>
+                                    <p class="sb-card-subtitle">Your personal contact details and reader identity.</p>
+                                </div>
+                            </div>
+
+                            <div class="sb-card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="profFullName" class="sb-form-label">
+                                            Full Name <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="sb-input-icon-wrap">
+                                            <i class="bi bi-person sb-input-icon"></i>
+                                            <input type="text" class="sb-form-input" id="profFullName" name="fullName" value="Krushna Patel" required>
+                                        </div>
+                                        <div class="invalid-feedback">Please enter your full name.</div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="profEmail" class="sb-form-label">
+                                            Email Address <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="sb-input-icon-wrap">
+                                            <i class="bi bi-envelope sb-input-icon"></i>
+                                            <input type="email" class="sb-form-input" id="profEmail" name="email" value="krushna.patel@example.com" required>
+                                        </div>
+                                        <div class="invalid-feedback">Please provide a valid email address.</div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="profPhone" class="sb-form-label">Phone Number</label>
+                                        <div class="sb-input-icon-wrap">
+                                            <i class="bi bi-telephone sb-input-icon"></i>
+                                            <input type="tel" class="sb-form-input" id="profPhone" name="phone" value="+1 (555) 389-2041" placeholder="+1 (555) 000-0000">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="profDob" class="sb-form-label">Date of Birth</label>
+                                        <div class="sb-input-icon-wrap">
+                                            <i class="bi bi-calendar-event sb-input-icon"></i>
+                                            <input type="date" class="sb-form-input" id="profDob" name="dob" value="1998-06-14">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="profLanguage" class="sb-form-label">Preferred Interface Language</label>
+                                        <div class="sb-input-icon-wrap">
+                                            <i class="bi bi-translate sb-input-icon"></i>
+                                            <select class="sb-form-select" id="profLanguage" name="language">
+                                                <option value="English" selected>English (US)</option>
+                                                <option value="Spanish">Español</option>
+                                                <option value="French">Français</option>
+                                                <option value="German">Deutsch</option>
+                                                <option value="Hindi">हिन्दी</option>
+                                                <option value="Japanese">日本語</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="profCreatedAt" class="sb-form-label">Account Created</label>
+                                        <div class="sb-input-icon-wrap">
+                                            <i class="bi bi-shield-check sb-input-icon text-muted"></i>
+                                            <input type="text" class="sb-form-input sb-input-readonly" id="profCreatedAt" value="January 15, 2025" readonly disabled title="Account creation date is permanent">
+                                        </div>
+                                        <div class="form-text" style="font-size: 0.72rem; color: #8A928E;">System verified date</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- ==========================================================
+                         RIGHT COLUMN: Unified Account Settings Card
+                         ========================================================== -->
+                    <div class="sb-profile-col">
+                        <section class="sb-card sb-form-section-card" id="cardAccountSettings">
+                            <div class="sb-card-header">
+                                <div class="sb-card-header-icon purple">
+                                    <i class="bi bi-gear-wide-connected"></i>
+                                </div>
+                                <div>
+                                    <h3 class="sb-card-title">Account Settings</h3>
+                                    <p class="sb-card-subtitle">Manage your password, notification preferences, and support.</p>
+                                </div>
+                            </div>
+
+                            <div class="sb-card-body">
+                                <!-- Subsection A: Security & Password (Collapsible) -->
+                                <div class="sb-settings-subsection mb-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <span class="sb-setting-title">
+                                                <i class="bi bi-shield-lock-fill text-primary me-1"></i> Security & Password
+                                            </span>
+                                            <p class="sb-setting-desc mb-0">Update your account credentials & password</p>
+                                        </div>
+                                        <button type="button" class="btn-profile-secondary" id="btnTogglePasswordCollapse" aria-expanded="false" aria-controls="passwordCollapseSection" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+                                            <i class="bi bi-key me-1"></i> <span id="togglePwdBtnText">Change Password</span>
+                                            <i class="bi bi-chevron-down ms-1" id="togglePwdChevron" style="font-size: 0.72rem; transition: transform 0.2s ease;"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Collapsible Password Container -->
+                                    <div class="sb-password-collapse-content" id="passwordCollapseSection">
+                                        <div class="pt-3">
+                                            <div class="mb-2">
+                                                <label for="currPassword" class="sb-form-label" style="font-size: 0.78rem;">Current Password</label>
+                                                <div class="sb-password-wrap">
+                                                    <i class="bi bi-key sb-input-icon"></i>
+                                                    <input type="password" class="sb-form-input" id="currPassword" placeholder="Enter current password">
+                                                    <button type="button" class="sb-password-toggle-btn" data-target="currPassword" title="Show/Hide Password">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="row g-2 mb-2">
+                                                <div class="col-md-6">
+                                                    <label for="newPassword" class="sb-form-label" style="font-size: 0.78rem;">New Password</label>
+                                                    <div class="sb-password-wrap">
+                                                        <i class="bi bi-lock sb-input-icon"></i>
+                                                        <input type="password" class="sb-form-input" id="newPassword" placeholder="Min 8 characters">
+                                                        <button type="button" class="sb-password-toggle-btn" data-target="newPassword" title="Show/Hide Password">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="confirmPassword" class="sb-form-label" style="font-size: 0.78rem;">Confirm Password</label>
+                                                    <div class="sb-password-wrap">
+                                                        <i class="bi bi-check2-circle sb-input-icon"></i>
+                                                        <input type="password" class="sb-form-input" id="confirmPassword" placeholder="Re-type password">
+                                                        <button type="button" class="sb-password-toggle-btn" data-target="confirmPassword" title="Show/Hide Password">
+                                                            <i class="bi bi-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Password Strength Indicator -->
+                                            <div class="sb-pwd-strength-wrap mb-2">
+                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                    <span style="font-size: 0.72rem; font-weight: 600; color: #747C78;">Password Strength:</span>
+                                                    <span style="font-size: 0.72rem; font-weight: 700;" id="pwdStrengthLabel">Enter password</span>
+                                                </div>
+                                                <div class="sb-pwd-strength-bar">
+                                                    <div class="sb-pwd-strength-fill" id="pwdStrengthFill"></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="sb-pwd-match-msg mb-2" id="pwdMatchMsg" style="display: none;"></div>
+
+                                            <button type="button" class="btn-profile-secondary w-100" id="btnUpdatePassword" style="font-size: 0.82rem; padding: 0.45rem;">
+                                                <i class="bi bi-shield-check"></i> Update Password
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sb-setting-divider"></div>
+
+                                <!-- Subsection B: Notification Preferences -->
+                                <div class="sb-settings-subsection mb-3">
+                                    <h4 class="sb-subsection-heading mb-2">
+                                        <i class="bi bi-bell-fill text-warning me-1"></i> Notification Preferences
+                                    </h4>
+
+                                    <!-- Email Notifications Switch -->
+                                    <div class="sb-setting-item">
+                                        <div class="sb-setting-info">
+                                            <span class="sb-setting-title">Email Notifications</span>
+                                            <p class="sb-setting-desc">Receive curated weekly reading highlights and editorial recommendations.</p>
+                                        </div>
+                                        <div class="form-check form-switch sb-custom-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="toggleEmailNotif" checked>
+                                        </div>
+                                    </div>
+
+                                    <div class="sb-setting-inner-divider"></div>
+
+                                    <!-- Reading Reminders Switch -->
+                                    <div class="sb-setting-item">
+                                        <div class="sb-setting-info">
+                                            <span class="sb-setting-title">Daily Reading Reminders</span>
+                                            <p class="sb-setting-desc">Evening gentle nudge at 8:00 PM to help meet your daily reading target.</p>
+                                        </div>
+                                        <div class="form-check form-switch sb-custom-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="toggleReminders" checked>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sb-setting-divider"></div>
+
+                                <!-- Subsection C: Support Information -->
+                                <div class="sb-settings-subsection">
+                                    <div class="sb-support-box">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <i class="bi bi-patch-question-fill text-success" style="font-size: 1.05rem;"></i>
+                                            <h5 class="h6 mb-0 fw-bold" style="color: #163E30; font-size: 0.86rem;">Need Editorial Support?</h5>
+                                        </div>
+                                        <p class="mb-2" style="font-size: 0.76rem; color: #5E6662; line-height: 1.4;">
+                                            Questions about library synchronization or account settings? Our editorial team is here to assist.
+                                        </p>
+                                        <a href="mailto:support@smartbook.library" class="sb-support-link">
+                                            <i class="bi bi-chat-dots me-1"></i> Contact Editorial Support
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <!-- ==========================================================
+                     DYNAMIC BOTTOM ACTIONS BAR (Visible only when unsaved changes exist)
+                     ========================================================== -->
+                <div class="sb-profile-actions-bar" id="profileActionsBar" style="display: none;">
+                    <div class="sb-actions-inner">
+                        <span class="sb-unsaved-badge" id="unsavedChangesNote">
+                            <i class="bi bi-circle-fill text-warning" style="font-size: 0.65rem; margin-right: 0.35rem;"></i>
+                            <strong>Unsaved Changes:</strong> Please save your profile edits or cancel to discard.
+                        </span>
+                        <div class="d-flex align-items-center gap-2">
+                            <button type="button" class="btn-profile-secondary" id="btnCancelProfile">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </button>
+                            <button type="submit" class="btn-profile-primary" id="btnSaveProfile">
+                                <i class="bi bi-check2"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     AVATAR SELECTOR MODAL
+     ========================================================================== -->
+<!-- ==========================================================================
+     AVATAR & PHOTO UPLOAD MODAL
+     ========================================================================== -->
+<div class="modal fade" id="sbAvatarModal" tabindex="-1" aria-labelledby="modalAvatarTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content sb-modal-content">
+            <div class="modal-header sb-modal-header">
+                <h3 class="modal-title sb-modal-title" id="modalAvatarTitle">
+                    <i class="bi bi-camera-fill text-success me-1"></i> Update Profile Photo
+                </h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body sb-modal-body">
+                <!-- Upload Local Photo Section -->
+                <div class="mb-3">
+                    <label class="sb-form-label"><i class="bi bi-upload me-1"></i> Upload Image from Device:</label>
+                    <div class="sb-upload-dropzone" id="avatarDropzone">
+                        <input type="file" id="avatarFileInput" accept="image/jpeg, image/jpg, image/png, image/webp" style="display: none;">
+                        <div class="d-flex flex-column align-items-center justify-content-center p-3 text-center" style="cursor: pointer;" id="dropzoneContent">
+                            <i class="bi bi-cloud-arrow-up text-success" style="font-size: 1.8rem;"></i>
+                            <span class="fw-semibold mt-1" style="font-size: 0.84rem; color: #163E30;">Click to browse or drag & drop photo</span>
+                            <span class="text-muted" style="font-size: 0.74rem;">JPG, JPEG, PNG, WEBP (Max 5MB)</span>
+                        </div>
+                        <div id="fileUploadPreviewWrap" style="display: none;" class="p-2 text-center">
+                            <img id="fileUploadPreviewImg" src="" alt="Preview" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid #163E30;">
+                            <div class="mt-1">
+                                <span class="badge bg-success" style="font-size: 0.72rem;" id="uploadFileName">image.jpg</span>
+                                <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-2" id="btnRemoveUploadedFile" style="font-size: 0.74rem; text-decoration: none;">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center my-2">
+                    <hr class="flex-grow-1 my-0 text-muted opacity-25">
+                    <span class="px-2 text-muted fw-semibold" style="font-size: 0.72rem;">OR CHOOSE AN AVATAR</span>
+                    <hr class="flex-grow-1 my-0 text-muted opacity-25">
+                </div>
+
+                <!-- Curated Avatars Selection -->
+                <div class="sb-avatar-selection-grid mb-3">
+                    <div class="sb-avatar-choice selected" data-avatar="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=240&q=80" title="Classic Portrait">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Avatar 1">
+                    </div>
+                    <div class="sb-avatar-choice" data-avatar="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=240&q=80" title="Editorial Look">
+                        <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=120&q=80" alt="Avatar 2">
+                    </div>
+                    <div class="sb-avatar-choice" data-avatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=240&q=80" title="Reader Casual">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Avatar 3">
+                    </div>
+                    <div class="sb-avatar-choice" data-avatar="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=240&q=80" title="Library Scholar">
+                        <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=120&q=80" alt="Avatar 4">
+                    </div>
+                </div>
+
+                <!-- Custom Image URL -->
+                <div class="mb-2">
+                    <label for="customAvatarUrl" class="sb-form-label" style="font-size: 0.78rem;">Or Enter Custom Image URL:</label>
+                    <input type="url" class="sb-form-input" id="customAvatarUrl" placeholder="https://example.com/my-photo.jpg">
+                </div>
+            </div>
+            <div class="modal-footer sb-modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="font-size: 0.84rem;">Cancel</button>
+                <button type="button" class="btn-profile-primary" id="btnApplyAvatar" style="padding: 0.5rem 1.25rem;">
+                    <i class="bi bi-check2"></i> Apply Avatar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/profile.js') if url_for else '/static/js/profile.js' }}"></script>
+{% endblock %}

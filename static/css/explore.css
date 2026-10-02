@@ -1,0 +1,613 @@
+/* ==========================================================================
+   SMARTBOOK — EXPLORE BOOKS STYLESHEET
+   Refined Editorial Bookstore Browsing Experience
+   ========================================================================== */
+
+/* Explore Page Header */
+.sb-explore-header {
+    margin-bottom: 1rem;
+}
+
+.sb-explore-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.sb-explore-title {
+    font-family: var(--sb-font-serif);
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: #163E30;
+    margin: 0 0 0.15rem 0;
+    line-height: 1.2;
+}
+
+.sb-explore-subtitle {
+    font-size: 0.88rem;
+    color: #5E6662;
+    margin: 0;
+}
+
+.sb-explore-results-count {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #68706C;
+    background: #EBE5D8;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   TOOLBAR & FILTER CONTROLS (Single Clean Desktop Row)
+   ========================================================================== */
+.sb-explore-toolbar {
+    background-color: #FFFFFF;
+    border: 1px solid #ECE7DE;
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(37, 42, 39, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.sb-explore-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 360px;
+}
+
+.sb-explore-search-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8E9590;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.sb-explore-search-input {
+    width: 100%;
+    height: 40px;
+    padding: 0.45rem 0.85rem 0.45rem 2.4rem;
+    background-color: #F8F6F0;
+    border: 1px solid #E2DDD2;
+    border-radius: 10px;
+    font-size: 0.86rem;
+    color: #252A27;
+    transition: all 0.2s ease;
+}
+
+.sb-explore-search-input::placeholder {
+    color: #9AA29E;
+}
+
+.sb-explore-search-input:focus {
+    background-color: #FFFFFF;
+    border-color: #285B49;
+    box-shadow: 0 0 0 3px rgba(40, 91, 73, 0.1);
+    outline: none;
+}
+
+.sb-explore-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.sb-explore-select {
+    height: 40px;
+    padding: 0.45rem 1.85rem 0.45rem 0.85rem;
+    background-color: #F8F6F0;
+    border: 1px solid #E2DDD2;
+    border-radius: 10px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: #252A27;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.sb-explore-select:focus {
+    border-color: #285B49;
+    background-color: #FFFFFF;
+}
+
+.btn-clear-filters {
+    height: 40px;
+    background: transparent;
+    border: 1px dashed #C87961;
+    color: #C87961;
+    font-family: var(--sb-font-heading);
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 0 0.85rem;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-clear-filters:hover {
+    background-color: #FDF3F0;
+    color: #A95B44;
+}
+
+/* ==========================================================================
+   GENRE CHIPS SECTION (Reduced Spacing & Polished Pills)
+   ========================================================================== */
+.sb-genre-pills-scroll {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    overflow-x: auto;
+    padding-bottom: 0.35rem;
+    margin-bottom: 1.15rem;
+    scrollbar-width: thin;
+    scrollbar-color: #D9D2C5 transparent;
+}
+
+.sb-genre-pills-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.sb-genre-pills-scroll::-webkit-scrollbar-thumb {
+    background-color: #D9D2C5;
+    border-radius: 4px;
+}
+
+.sb-genre-tab {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E0D5;
+    color: #5E6662;
+    font-family: var(--sb-font-heading);
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 0.42rem 0.95rem;
+    border-radius: 20px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.sb-genre-tab:hover {
+    color: #163E30;
+    border-color: #163E30;
+    background-color: #FAF8F3;
+}
+
+.sb-genre-tab.active {
+    background-color: #163E30;
+    border-color: #163E30;
+    color: #FFFFFF;
+    box-shadow: 0 2px 6px rgba(22, 62, 48, 0.18);
+}
+
+/* ==========================================================================
+   BOOK COLLECTION GRID (Responsive 4-Column CSS Grid, Left-Aligned)
+   ========================================================================== */
+.sb-explore-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.15rem;
+    margin-bottom: 0.5rem;
+    align-items: stretch;
+}
+
+.sb-explore-card {
+    background-color: #FFFFFF;
+    border: 1px solid #ECE7DE;
+    border-radius: 16px;
+    padding: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(37, 42, 39, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+}
+
+.sb-explore-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(37, 42, 39, 0.07);
+}
+
+.sb-explore-card-top {
+    display: flex;
+    gap: 0.95rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Prominent Book Cover Thumbnail (88px × 126px) */
+.sb-explore-thumb {
+    width: 88px;
+    height: 126px;
+    min-width: 88px;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.sb-explore-thumb:hover {
+    transform: scale(1.02);
+}
+
+.sb-explore-details {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sb-rating-badge {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: #FFF9E6;
+    color: #B27B00;
+    font-family: var(--sb-font-heading);
+    font-weight: 700;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 5px;
+    margin-bottom: 0.25rem;
+}
+
+.sb-explore-book-title {
+    font-family: var(--sb-font-heading);
+    font-weight: 700;
+    font-size: 0.96rem;
+    color: #252A27;
+    margin: 0 0 2px 0;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.sb-explore-book-title:hover {
+    color: #163E30;
+}
+
+.sb-explore-book-author {
+    font-size: 0.78rem;
+    color: #747C78;
+    margin-bottom: 0.35rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sb-explore-genre-tag {
+    align-self: flex-start;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
+    background-color: #E2F4EC;
+    color: #1D6E52;
+}
+
+.sb-explore-desc {
+    font-size: 0.76rem;
+    color: #666E6A;
+    line-height: 1.38;
+    margin: 0 0 0.85rem 0;
+    min-height: 32px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   ACTION BUTTONS (Clearly Differentiated Primary & Secondary)
+   ========================================================================== */
+.sb-explore-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.sb-explore-actions-row {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+}
+
+/* Primary Action: Add to My Books */
+.btn-add-explore {
+    flex: 1;
+    height: 36px;
+    background-color: #163E30;
+    border: 1px solid #163E30;
+    color: #FFFFFF;
+    font-family: var(--sb-font-heading);
+    font-weight: 600;
+    font-size: 0.78rem;
+    padding: 0 0.6rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.btn-add-explore:hover {
+    background-color: #0E291E;
+    color: #FFFFFF;
+}
+
+.btn-add-explore:focus-visible {
+    outline: 2px solid #285B49;
+    outline-offset: 2px;
+}
+
+/* Wishlist Heart Icon */
+.btn-wish-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border: 1px solid #E2DDD2;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #747C78;
+    font-size: 0.92rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.btn-wish-icon:hover, .btn-wish-icon.active {
+    color: #C87961;
+    border-color: #E5A18E;
+    background-color: #FDF3F0;
+}
+
+/* Secondary Action: View Details */
+.btn-details-explore {
+    width: 100%;
+    height: 32px;
+    background-color: #FAF8F4;
+    border: 1px solid #E2DDD2;
+    color: #163E30;
+    font-family: var(--sb-font-heading);
+    font-weight: 600;
+    font-size: 0.76rem;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-details-explore:hover {
+    background-color: #F0ECE2;
+    border-color: #C5BFB2;
+    color: #163E30;
+}
+
+/* ==========================================================================
+   EMPTY STATE
+   ========================================================================== */
+.sb-empty-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3.5rem 2rem;
+    background: #FFFFFF;
+    border: 1px dashed #D9D2C5;
+    border-radius: 18px;
+    margin-bottom: 2rem;
+}
+
+.sb-empty-icon {
+    font-size: 2.75rem;
+    color: #C87961;
+    margin-bottom: 0.75rem;
+}
+
+.sb-empty-title {
+    font-family: var(--sb-font-heading);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #163E30;
+    margin-bottom: 0.35rem;
+}
+
+.sb-empty-desc {
+    font-size: 0.88rem;
+    color: #747C78;
+    max-width: 380px;
+    margin-bottom: 1.15rem;
+}
+
+/* ==========================================================================
+   PAGINATION CONTROLS
+   ========================================================================== */
+.sb-pagination-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.sb-page-btn {
+    background-color: #FFFFFF;
+    border: 1px solid #ECE7DE;
+    color: #252A27;
+    font-family: var(--sb-font-heading);
+    font-weight: 600;
+    font-size: 0.84rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.sb-page-btn:hover:not(.disabled) {
+    background-color: #F8F6F0;
+    border-color: #D9D2C5;
+}
+
+.sb-page-btn.active {
+    background-color: #163E30;
+    border-color: #163E30;
+    color: #FFFFFF;
+}
+
+.sb-page-btn.nav-arrow {
+    width: auto;
+    padding: 0 0.85rem;
+    gap: 0.3rem;
+}
+
+.sb-page-btn.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+    background-color: #F8F6F0;
+    border-color: #ECE7DE;
+    color: #9AA29E;
+}
+
+/* ==========================================================================
+   BOOK DETAILS MODAL (Editorial Warm Style)
+   ========================================================================== */
+.sb-modal-content {
+    background-color: #FAF7EE;
+    border: 1px solid #ECE5D8;
+    border-radius: 20px;
+    box-shadow: 0 16px 48px rgba(22, 62, 48, 0.18);
+    overflow: hidden;
+}
+
+.sb-modal-header {
+    border-bottom: 1px solid #EAE4D6;
+    padding: 1.15rem 1.6rem;
+    background: #FFFFFF;
+}
+
+.sb-modal-title {
+    font-family: var(--sb-font-serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #163E30;
+}
+
+.sb-modal-body {
+    padding: 1.6rem;
+}
+
+.sb-modal-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 1.5rem;
+}
+
+.sb-modal-cover {
+    width: 140px;
+    height: 200px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+}
+
+.sb-modal-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.sb-modal-synopsis {
+    font-size: 0.88rem;
+    color: #5E6662;
+    line-height: 1.5;
+    margin-top: 0.45rem;
+}
+
+.sb-modal-badges {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.35rem;
+}
+
+.sb-modal-footer {
+    border-top: 1px solid #EAE4D6;
+    padding: 0.95rem 1.6rem;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.65rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS (Desktop up to 4 cols, Medium 3 cols, Tablet 2 cols, Mobile 1 col)
+   ========================================================================== */
+@media (max-width: 1399.98px) {
+    .sb-explore-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sb-explore-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .sb-explore-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .sb-explore-search-wrap {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .sb-explore-grid {
+        grid-template-columns: 1fr;
+    }
+    .sb-modal-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+    }
+}

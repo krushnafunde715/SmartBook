@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 380" fill="none" class="sb-books-illustration">
+    <defs>
+        <linearGradient id="bookCoverForest" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#285B49"/>
+            <stop offset="100%" stop-color="#1B3F33"/>
+        </linearGradient>
+        <linearGradient id="bookCoverTerracotta" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#C87961"/>
+            <stop offset="100%" stop-color="#A95B44"/>
+        </linearGradient>
+        <linearGradient id="lampGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFFDF5" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="#F2EADA" stop-opacity="0.2"/>
+        </linearGradient>
+        <filter id="softShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#252A27" flood-opacity="0.07"/>
+        </filter>
+        <filter id="pillShadow" x="-15%" y="-15%" width="130%" height="130%" filterUnits="userSpaceOnUse">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#285B49" flood-opacity="0.08"/>
+        </filter>
+    </defs>
+
+    <!-- Warm Cream Architectural Portal Arch -->
+    <rect x="40" y="20" width="380" height="340" rx="28" fill="#FAF8F4"/>
+    <path d="M140 20 H320 C360 20, 390 50, 390 90 V320 C390 340, 370 360, 350 360 H110 C90 360, 70 340, 70 320 V90 C70 50, 100 20, 140 20 Z" fill="#F4EFE6" opacity="0.65"/>
+
+    <!-- Warm Ambient Light Cone from Lamp -->
+    <path d="M365 70 L200 270 L385 270 Z" fill="url(#lampGlow)" opacity="0.75"/>
+
+    <!-- Desk Horizon Line -->
+    <line x1="60" y1="285" x2="400" y2="285" stroke="#E5E1D5" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="230" cy="287" rx="135" ry="7" fill="#E8E2D6" opacity="0.6"/>
+
+    <!-- Stacked Books on Left -->
+    <g filter="url(#softShadow)" transform="translate(90, 185)">
+        <!-- Bottom Book (Terracotta) -->
+        <rect x="0" y="65" width="115" height="22" rx="4" fill="url(#bookCoverTerracotta)"/>
+        <rect x="110" y="67" width="5" height="18" fill="#FAF6EE" rx="2"/>
+        <line x1="8" y1="67" x2="8" y2="85" stroke="#E5A18E" stroke-width="2"/>
+
+        <!-- Middle Book (Forest Green) -->
+        <rect x="8" y="42" width="105" height="20" rx="4" fill="url(#bookCoverForest)"/>
+        <rect x="108" y="44" width="5" height="16" fill="#FAF6EE" rx="2"/>
+        <line x1="16" y1="44" x2="16" y2="60" stroke="#48866E" stroke-width="1.5"/>
+
+        <!-- Top Book (Gold Ochre Accent) -->
+        <rect x="18" y="20" width="90" height="19" rx="3" fill="#D99B43"/>
+        <rect x="103" y="22" width="5" height="15" fill="#FAF6EE" rx="2"/>
+
+        <!-- Bookmark Ribbon -->
+        <path d="M45 38 L45 75 L52 70 L59 75 L59 38 Z" fill="#C87961"/>
+    </g>
+
+    <!-- Centerpiece: Open Hardcover Book -->
+    <g filter="url(#softShadow)" transform="translate(165, 140)">
+        <!-- Hardcover Base -->
+        <path d="M10 115 C55 105, 105 108, 105 108 C105 108, 155 105, 200 115 L195 38 C150 28, 105 32, 105 32 C105 32, 60 28, 15 38 Z" fill="#1E4537"/>
+
+        <!-- Left Open Page Stack -->
+        <path d="M18 36 C60 27, 104 30, 104 30 L104 104 C104 104, 60 101, 18 110 Z" fill="#FFFFFF"/>
+        <path d="M22 39 C62 31, 103 33, 103 33 L103 102 C103 102, 62 100, 22 107 Z" fill="#FAF8F3"/>
+
+        <!-- Right Open Page Stack -->
+        <path d="M106 30 C106 30, 150 27, 192 36 L192 110 C150 101, 106 104, 106 104 Z" fill="#FFFFFF"/>
+        <path d="M107 33 C107 33, 148 31, 188 39 L188 107 C148 100, 107 102, 107 102 Z" fill="#F6F4ED"/>
+
+        <!-- Center Spine Crease -->
+        <line x1="105" y1="30" x2="105" y2="106" stroke="#DDD5C7" stroke-width="2"/>
+
+        <!-- Page Text Placeholder Lines -->
+        <rect x="34" y="48" width="55" height="3" rx="1.5" fill="#DDD5C7"/>
+        <rect x="34" y="58" width="50" height="3" rx="1.5" fill="#E8E2D6"/>
+        <rect x="34" y="68" width="58" height="3" rx="1.5" fill="#E8E2D6"/>
+        <rect x="34" y="78" width="42" height="3" rx="1.5" fill="#E8E2D6"/>
+
+        <rect x="120" y="48" width="55" height="3" rx="1.5" fill="#DDD5C7"/>
+        <rect x="120" y="58" width="58" height="3" rx="1.5" fill="#E8E2D6"/>
+        <rect x="120" y="68" width="45" height="3" rx="1.5" fill="#E8E2D6"/>
+        <rect x="120" y="78" width="52" height="3" rx="1.5" fill="#E8E2D6"/>
+
+        <!-- Subtle Ambient Particles -->
+        <circle cx="105" cy="18" r="4.5" fill="#D99B43" opacity="0.9"/>
+        <circle cx="85" cy="12" r="3" fill="#C87961" opacity="0.8"/>
+        <circle cx="130" cy="10" r="3.5" fill="#285B49" opacity="0.8"/>
+    </g>
+
+    <!-- Coffee Cup on Right -->
+    <g transform="translate(325, 235)">
+        <ellipse cx="25" cy="46" rx="18" ry="4" fill="#E2DBD0"/>
+        <path d="M12 24 C12 38, 16 45, 25 45 C34 45, 38 38, 38 24 Z" fill="#FFFFFF" stroke="#E2DBD0" stroke-width="1.5"/>
+        <path d="M36 28 C43 28, 44 38, 35 40" fill="none" stroke="#E2DBD0" stroke-width="2.5" stroke-linecap="round"/>
+        <ellipse cx="25" cy="24" rx="12" ry="3.5" fill="#8D5B4C"/>
+        <path d="M22 17 C20 12, 25 9, 23 4" fill="none" stroke="#C87961" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    </g>
+
+    <!-- Reading Lamp -->
+    <g transform="translate(345, 45)">
+        <path d="M25 240 C15 240, 10 238, 10 235 H40 C40 238, 35 240, 25 240 Z" fill="#2D3436"/>
+        <path d="M25 235 V80 C25 50, 45 35, 20 25" fill="none" stroke="#2D3436" stroke-width="3" stroke-linecap="round"/>
+        <path d="M5 20 L30 10 L35 32 L10 40 Z" fill="#285B49"/>
+        <circle cx="18" cy="32" r="5" fill="#FFEAA7"/>
+    </g>
+
+    <!-- Floating Badge Left -->
+    <g filter="url(#pillShadow)" transform="translate(58, 48)">
+        <rect width="148" height="38" rx="19" fill="#FFFFFF"/>
+        <circle cx="20" cy="19" r="11" fill="#E8F4F0"/>
+        <path d="M16 19 L19 22 L25 15" stroke="#285B49" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="38" y="23" font-family="'Outfit', -apple-system, sans-serif" font-weight="700" font-size="11.5" fill="#285B49">Rule-Based AI</text>
+    </g>
+
+    <!-- Floating Badge Right -->
+    <g filter="url(#pillShadow)" transform="translate(245, 75)">
+        <rect width="140" height="36" rx="18" fill="#FFFFFF"/>
+        <circle cx="18" cy="18" r="10" fill="#FCF2EE"/>
+        <text x="13" y="22" font-family="'Outfit', -apple-system, sans-serif" font-weight="700" font-size="11" fill="#C87961">✦</text>
+        <text x="34" y="22" font-family="'Outfit', -apple-system, sans-serif" font-weight="700" font-size="11" fill="#252A27">Curated Reads</text>
+    </g>
+</svg>

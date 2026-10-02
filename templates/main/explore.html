@@ -1,0 +1,735 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore Books — SmartBook{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') if url_for else '/static/css/dashboard.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') if url_for else '/static/css/explore.css' }}">
+{% endblock %}
+
+{% block content %}
+<div class="sb-dash-layout">
+    <!-- ==========================================================================
+         A. LEFT SIDEBAR (Dark Forest Green #163E30)
+         ========================================================================== -->
+    <aside class="sb-dash-sidebar">
+        <div>
+            <!-- SmartBook Original Approved Brand Logo -->
+            <a href="/" class="sb-dash-brand-wrap" title="SmartBook">
+                <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}" alt="SmartBook Logo" class="sb-dash-brand-logo">
+            </a>
+
+            <!-- Navigation Items -->
+            <ul class="sb-dash-nav">
+                <li>
+                    <a href="/dashboard" class="sb-dash-nav-link">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/explore" class="sb-dash-nav-link active">
+                        <i class="bi bi-search"></i>
+                        <span>Explore Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/my-books" class="sb-dash-nav-link">
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>My Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/wishlist" class="sb-dash-nav-link">
+                        <i class="bi bi-heart"></i>
+                        <span>My Wishlist</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/history" class="sb-dash-nav-link">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Reading History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/profile" class="sb-dash-nav-link">
+                        <i class="bi bi-person"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sb-dash-divider"></div>
+
+            <ul class="sb-dash-nav">
+                <li>
+                    <form action="{{ url_for('auth.logout') if url_for else '/auth/logout' }}" method="POST" class="sb-logout-form m-0 p-0" id="logoutForm">
+                        <button type="submit" class="sb-dash-nav-link logout" title="Log out of SmartBook">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Botanical Stacked Books Illustration -->
+        <div class="sb-dash-sidebar-footer">
+            <img src="/static/images/sidebar-books-art.svg" alt="Botanical Books Illustration" class="sb-dash-sidebar-art">
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+         MAIN VIEWPORT
+         ========================================================================== -->
+    <div class="sb-dash-main">
+        <!-- Top Navigation Bar -->
+        <header class="sb-dash-header">
+            <!-- Global Search Bar -->
+            <div class="sb-dash-search-wrap">
+                <i class="bi bi-search sb-dash-search-icon"></i>
+                <input type="text" class="sb-dash-search-input" id="sbTopSearch" placeholder="Search books, authors, or genres...">
+            </div>
+
+            <!-- User Area -->
+            <div class="sb-dash-user-area">
+                <button type="button" class="sb-dash-notify-btn" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                    <span class="sb-dash-notify-dot"></span>
+                </button>
+
+                <a href="/profile" class="sb-dash-user-profile" title="My Profile" style="text-decoration: none; color: inherit;">
+                    <img src="{{ current_user.avatar_url if current_user and current_user.is_authenticated else 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" alt="{{ current_user.full_name if current_user and current_user.is_authenticated else 'Krushna' }}" class="sb-dash-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Krushna&background=163E30&color=fff'">
+                    <span class="sb-dash-username">{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}</span>
+                    <i class="bi bi-chevron-down ms-1 text-muted" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="sb-dash-body">
+            <!-- Top Section Header -->
+            <div class="sb-explore-header">
+                <div class="sb-explore-title-row">
+                    <div>
+                        <h1 class="sb-explore-title">Explore Books</h1>
+                        <p class="sb-explore-subtitle">Find your next favorite read from our curated editorial library.</p>
+                    </div>
+                    <div class="sb-explore-results-count" id="sbResultsCount">
+                        Showing 16 of 16 books
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar & Filter Controls (Single Row) -->
+            <div class="sb-explore-toolbar">
+                <div class="sb-explore-search-wrap">
+                    <i class="bi bi-search sb-explore-search-icon"></i>
+                    <input type="text" class="sb-explore-search-input" id="sbExploreSearch" placeholder="Filter catalog by title, author, keyword...">
+                </div>
+
+                <div class="sb-explore-filters">
+                    <!-- Sort By -->
+                    <select class="sb-explore-select" id="sbSortSelect" aria-label="Sort books">
+                        <option value="rating-desc">Sort by: Highest Rated</option>
+                        <option value="title-asc">Sort by: Title (A–Z)</option>
+                        <option value="author-asc">Sort by: Author (A–Z)</option>
+                    </select>
+
+                    <!-- Language Filter -->
+                    <select class="sb-explore-select" id="sbLanguageSelect" aria-label="Filter by language">
+                        <option value="all">All Languages</option>
+                        <option value="English">English</option>
+                        <option value="Spanish">Spanish</option>
+                        <option value="Japanese">Japanese</option>
+                    </select>
+
+                    <!-- Clear Filters -->
+                    <button type="button" class="btn-clear-filters" id="sbClearFilters">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Genre Chips Horizontal Scroll Section -->
+            <div class="sb-genre-pills-scroll" role="tablist">
+                <button type="button" class="sb-genre-tab active" data-genre="all">All Books</button>
+                <button type="button" class="sb-genre-tab" data-genre="Fiction">Fiction</button>
+                <button type="button" class="sb-genre-tab" data-genre="Mystery">Mystery</button>
+                <button type="button" class="sb-genre-tab" data-genre="Thriller">Thriller</button>
+                <button type="button" class="sb-genre-tab" data-genre="Romance">Romance</button>
+                <button type="button" class="sb-genre-tab" data-genre="Fantasy">Fantasy</button>
+                <button type="button" class="sb-genre-tab" data-genre="Science Fiction">Science Fiction</button>
+                <button type="button" class="sb-genre-tab" data-genre="Self-Help">Self-Help</button>
+                <button type="button" class="sb-genre-tab" data-genre="Biography">Biography</button>
+                <button type="button" class="sb-genre-tab" data-genre="Technology">Technology</button>
+                <button type="button" class="sb-genre-tab" data-genre="Psychology">Psychology</button>
+            </div>
+
+            <!-- Book Collection Grid (16 Full Curated Entries) -->
+            <div class="sb-explore-grid" id="sbExploreGrid">
+                <!-- Book 1 -->
+                <div class="sb-explore-card" data-title="Atomic Habits" data-author="James Clear" data-genre="Self-Help" data-language="English" data-rating="4.9" data-pages="320" data-cover-class="atomic" data-synopsis="Atomic Habits by James Clear provides a proven framework for improving every day. Learn how tiny behavioral shifts lead to remarkable results.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled atomic">
+                                    <div class="sb-cover-title">Atomic<br>Habits</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.9</span>
+                                <h3 class="sb-explore-book-title" title="Atomic Habits">Atomic Habits</h3>
+                                <span class="sb-explore-book-author">James Clear</span>
+                                <span class="sb-explore-genre-tag">Self-Help</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">An easy and proven way to build good habits and break bad ones through tiny, compound changes.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Atomic Habits">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Atomic Habits" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 2 -->
+                <div class="sb-explore-card" data-title="The Alchemist" data-author="Paulo Coelho" data-genre="Fiction" data-language="English, Spanish" data-rating="4.8" data-pages="208" data-cover-class="alchemist" data-synopsis="Paulo Coelho's masterpiece tells the mystical story of Santiago, an Andalusian shepherd boy who yearns to travel in search of worldly treasure.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled alchemist">
+                                    <div class="sb-cover-title">THE<br>ALCHEMIST</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.8</span>
+                                <h3 class="sb-explore-book-title" title="The Alchemist">The Alchemist</h3>
+                                <span class="sb-explore-book-author">Paulo Coelho</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #EDE8F5; color: #5842BE;">Fiction</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">A transformative fable about following your dreams, listening to your heart, and realizing your destiny.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="The Alchemist">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="The Alchemist" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 3 -->
+                <div class="sb-explore-card" data-title="Clean Code" data-author="Robert C. Martin" data-genre="Technology" data-language="English" data-rating="4.7" data-pages="464" data-cover-class="clean" data-synopsis="Even bad code can function. But if code isn't clean, it can bring a development organization to its knees. Master the values of clean code craftsmanship.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled clean">
+                                    <div class="sb-cover-title">Clean Code</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.7</span>
+                                <h3 class="sb-explore-book-title" title="Clean Code">Clean Code</h3>
+                                <span class="sb-explore-book-author">Robert C. Martin</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #EDEAE1; color: #5A625E;">Technology</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">A handbook of agile software craftsmanship, code formatting, refactoring, and engineering principles.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Clean Code">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Clean Code" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 4 -->
+                <div class="sb-explore-card" data-title="Ikigai" data-author="Héctor García" data-genre="Psychology" data-language="English, Japanese" data-rating="4.6" data-pages="208" data-cover-class="ikigai" data-synopsis="Discover the Japanese secret to a long, healthy, and happy life through the intersection of passion, mission, vocation, and profession.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled ikigai">
+                                    <div class="sb-cover-title">IKIGAI</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.6</span>
+                                <h3 class="sb-explore-book-title" title="Ikigai">Ikigai</h3>
+                                <span class="sb-explore-book-author">Héctor García</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #F2EAF8; color: #6D3D94;">Psychology</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">The Japanese philosophy of finding your reason for being and achieving joyful longevity.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Ikigai">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Ikigai" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 5 -->
+                <div class="sb-explore-card" data-title="Deep Work" data-author="Cal Newport" data-genre="Self-Help" data-language="English" data-rating="4.8" data-pages="304" data-cover-class="deepwork" data-synopsis="Deep work is the ability to focus without distraction on a cognitively demanding task. Learn rules to transform your output and career.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled deepwork">
+                                    <div class="sb-cover-title">DEEP<br>WORK</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.8</span>
+                                <h3 class="sb-explore-book-title" title="Deep Work">Deep Work</h3>
+                                <span class="sb-explore-book-author">Cal Newport</span>
+                                <span class="sb-explore-genre-tag">Self-Help</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">Rules for focused success in an increasingly distracted, hyperconnected world.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Deep Work">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Deep Work" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 6 -->
+                <div class="sb-explore-card" data-title="The 5 AM Club" data-author="Robin Sharma" data-genre="Self-Help" data-language="English" data-rating="4.5" data-pages="336" data-cover-class="club5am" data-synopsis="Legendary leadership icon Robin Sharma reveals the revolutionary morning routine that has helped clients maximize productivity and activate vitality.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled club5am">
+                                    <div class="sb-cover-title">5 AM<br>CLUB</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.5</span>
+                                <h3 class="sb-explore-book-title" title="The 5 AM Club">The 5 AM Club</h3>
+                                <span class="sb-explore-book-author">Robin Sharma</span>
+                                <span class="sb-explore-genre-tag">Self-Help</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">Own your morning, elevate your life, and build bulletproof resilience through daily morning mastery.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="The 5 AM Club">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="The 5 AM Club" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 7 -->
+                <div class="sb-explore-card" data-title="Dune" data-author="Frank Herbert" data-genre="Science Fiction" data-language="English" data-rating="4.9" data-pages="688" data-cover-class="dune" data-synopsis="Set on the desert planet Arrakis, Dune is the story of Paul Atreides, heir to a noble family tasked with ruling an inhospitable world.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled dune">
+                                    <div class="sb-cover-title">DUNE</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.9</span>
+                                <h3 class="sb-explore-book-title" title="Dune">Dune</h3>
+                                <span class="sb-explore-book-author">Frank Herbert</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #E8EFF8; color: #35629E;">Science Fiction</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">The epic grand sci-fi masterpiece exploring politics, religion, ecology, and human ambition.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Dune">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Dune" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 8 -->
+                <div class="sb-explore-card" data-title="The Silent Patient" data-author="Alex Michaelides" data-genre="Thriller" data-language="English" data-rating="4.7" data-pages="336" data-cover-class="alchemist" data-synopsis="Alicia Berenson’s life is seemingly perfect. One evening she shoots her husband five times and never speaks another word. Psychotherapist Theo Faber searches for the truth.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled alchemist" style="background: linear-gradient(135deg, #2C3E50 0%, #000000 100%);">
+                                    <div class="sb-cover-title">SILENT<br>PATIENT</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.7</span>
+                                <h3 class="sb-explore-book-title" title="The Silent Patient">The Silent Patient</h3>
+                                <span class="sb-explore-book-author">Alex Michaelides</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #FBE9E7; color: #D84315;">Thriller</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">A shocking psychological thriller exploring deep trauma, hidden motives, and therapeutic secrets.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="The Silent Patient">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="The Silent Patient" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 9 -->
+                <div class="sb-explore-card" data-title="Steve Jobs" data-author="Walter Isaacson" data-genre="Biography" data-language="English" data-rating="4.8" data-pages="656" data-cover-class="clean" data-synopsis="Based on more than forty interviews with Jobs conducted over two years, Walter Isaacson crafts a gripping story of a creative entrepreneur.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled clean" style="background: linear-gradient(135deg, #37474F 0%, #263238 100%);">
+                                    <div class="sb-cover-title">STEVE<br>JOBS</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.8</span>
+                                <h3 class="sb-explore-book-title" title="Steve Jobs">Steve Jobs</h3>
+                                <span class="sb-explore-book-author">Walter Isaacson</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #FDF3E6; color: #A86718;">Biography</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">The definitive biography of the Silicon Valley icon who revolutionized technology, music, and design.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Steve Jobs">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Steve Jobs" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 10 -->
+                <div class="sb-explore-card" data-title="The Midnight Library" data-author="Matt Haig" data-genre="Fantasy" data-language="English" data-rating="4.7" data-pages="304" data-cover-class="ikigai" data-synopsis="Somewhere out beyond the edge of the universe there is a library that contains an infinite number of books, each one telling the story of another life you could have lived.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled ikigai" style="background: linear-gradient(135deg, #1A237E 0%, #311B92 100%); color: #FFF;">
+                                    <div class="sb-cover-title">MIDNIGHT<br>LIBRARY</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.7</span>
+                                <h3 class="sb-explore-book-title" title="The Midnight Library">The Midnight Library</h3>
+                                <span class="sb-explore-book-author">Matt Haig</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #EDE8F5; color: #5842BE;">Fantasy</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">A heartwarming tale about regret, hope, and the extraordinary choices that truly define our lives.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="The Midnight Library">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="The Midnight Library" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 11 -->
+                <div class="sb-explore-card" data-title="Project Hail Mary" data-author="Andy Weir" data-genre="Science Fiction" data-language="English" data-rating="4.9" data-pages="496" data-cover-class="club5am" data-synopsis="Ryland Grace is the sole survivor on a desperate, last-chance mission to save humanity from an extinction-level solar crisis.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled club5am" style="background: linear-gradient(135deg, #FF6F00 0%, #E65100 100%);">
+                                    <div class="sb-cover-title">PROJECT<br>HAIL MARY</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.9</span>
+                                <h3 class="sb-explore-book-title" title="Project Hail Mary">Project Hail Mary</h3>
+                                <span class="sb-explore-book-author">Andy Weir</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #E8EFF8; color: #35629E;">Science Fiction</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">An interstellar survival story filled with scientific ingenuity, humor, and unexpected discovery.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Project Hail Mary">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Project Hail Mary" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 12 -->
+                <div class="sb-explore-card" data-title="Thinking, Fast and Slow" data-author="Daniel Kahneman" data-genre="Psychology" data-language="English" data-rating="4.8" data-pages="512" data-cover-class="deepwork" data-synopsis="Nobel laureate Daniel Kahneman takes us on a groundbreaking tour of the mind, explaining the two systems that drive the way we think and make judgments.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled deepwork" style="background: linear-gradient(135deg, #F57F17 0%, #BC5100 100%); color: #FFF;">
+                                    <div class="sb-cover-title">THINKING<br>FAST/SLOW</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.8</span>
+                                <h3 class="sb-explore-book-title" title="Thinking, Fast and Slow">Thinking, Fast and Slow</h3>
+                                <span class="sb-explore-book-author">Daniel Kahneman</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #F2EAF8; color: #6D3D94;">Psychology</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">The seminal psychological masterwork exploring intuition, cognitive biases, and rational judgment.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Thinking, Fast and Slow">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Thinking, Fast and Slow" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 13 -->
+                <div class="sb-explore-card" data-title="Pride and Prejudice" data-author="Jane Austen" data-genre="Romance" data-language="English" data-rating="4.8" data-pages="432" data-cover-class="atomic" data-synopsis="Jane Austen's witty comedy of manners follows the turbulent relationship between Elizabeth Bennet, the daughter of a country gentleman, and Fitzwilliam Darcy.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled atomic" style="background: linear-gradient(135deg, #F8BBD0 0%, #EC407A 100%); color: #FFF;">
+                                    <div class="sb-cover-title">PRIDE &<br>PREJUDICE</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.8</span>
+                                <h3 class="sb-explore-book-title" title="Pride and Prejudice">Pride and Prejudice</h3>
+                                <span class="sb-explore-book-author">Jane Austen</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #FCE4EC; color: #C2185B;">Romance</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">A timeless literary romance exploring social status, misunderstanding, and true affection.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Pride and Prejudice">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Pride and Prejudice" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 14 -->
+                <div class="sb-explore-card" data-title="The Da Vinci Code" data-author="Dan Brown" data-genre="Mystery" data-language="English" data-rating="4.6" data-pages="454" data-cover-class="dune" data-synopsis="While in Paris, Harvard symbologist Robert Langdon is awakened by an urgent phone call: the elderly curator of the Louvre has been murdered inside the museum.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled dune" style="background: linear-gradient(135deg, #4E342E 0%, #1A120B 100%); color: #FFE082;">
+                                    <div class="sb-cover-title">DA VINCI<br>CODE</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.6</span>
+                                <h3 class="sb-explore-book-title" title="The Da Vinci Code">The Da Vinci Code</h3>
+                                <span class="sb-explore-book-author">Dan Brown</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #EFEBE9; color: #4E342E;">Mystery</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">A heart-pounding mystery decoding secret religious societies and hidden art messages across Europe.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="The Da Vinci Code">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="The Da Vinci Code" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 15 -->
+                <div class="sb-explore-card" data-title="Educated" data-author="Tara Westover" data-genre="Biography" data-language="English" data-rating="4.9" data-pages="352" data-cover-class="alchemist" data-synopsis="Born to survivalists in the mountains of Idaho, Tara Westover was seventeen the first time she set foot in a classroom. Her quest for knowledge transformed her.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled alchemist" style="background: linear-gradient(135deg, #004D40 0%, #00695C 100%);">
+                                    <div class="sb-cover-title">EDUCATED</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.9</span>
+                                <h3 class="sb-explore-book-title" title="Educated">Educated</h3>
+                                <span class="sb-explore-book-author">Tara Westover</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #FDF3E6; color: #A86718;">Biography</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">An unforgettable memoir of resilience, fierce determination, and the struggle for self-invention.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Educated">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Educated" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Book 16 -->
+                <div class="sb-explore-card" data-title="Designing Data-Intensive Apps" data-author="Martin Kleppmann" data-genre="Technology" data-language="English" data-rating="4.9" data-pages="616" data-cover-class="clean" data-synopsis="Data is at the center of many challenges in system design today. Discover the key principles, algorithms, and trade-offs of scalable distributed architectures.">
+                    <div>
+                        <div class="sb-explore-card-top">
+                            <div class="sb-explore-thumb">
+                                <div class="sb-cover-styled clean" style="background: linear-gradient(135deg, #01579B 0%, #0D47A1 100%);">
+                                    <div class="sb-cover-title">DATA<br>SYSTEMS</div>
+                                </div>
+                            </div>
+                            <div class="sb-explore-details">
+                                <span class="sb-rating-badge"><i class="bi bi-star-fill"></i> 4.9</span>
+                                <h3 class="sb-explore-book-title" title="Designing Data-Intensive Applications">Designing Data-Intensive Applications</h3>
+                                <span class="sb-explore-book-author">Martin Kleppmann</span>
+                                <span class="sb-explore-genre-tag" style="background-color: #EDEAE1; color: #5A625E;">Technology</span>
+                            </div>
+                        </div>
+                        <p class="sb-explore-desc">The industry standard reference for distributed databases, streaming pipelines, and fault tolerance.</p>
+                    </div>
+                    <div class="sb-explore-actions">
+                        <div class="sb-explore-actions-row">
+                            <button type="button" class="btn-add-explore" data-book="Designing Data-Intensive Applications">
+                                <i class="bi bi-plus-lg"></i> Add to My Books
+                            </button>
+                            <button type="button" class="btn-wish-icon" data-book="Designing Data-Intensive Applications" title="Add to Wishlist">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="btn-details-explore">View Details</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="sb-empty-state" id="sbEmptyState">
+                <i class="bi bi-search sb-empty-icon"></i>
+                <h3 class="sb-empty-title">No books found</h3>
+                <p class="sb-empty-desc">We couldn't find any books matching your current search and filter settings.</p>
+                <button type="button" class="btn btn-hero-action" onclick="document.getElementById('sbClearFilters').click();">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    <span>Reset All Filters</span>
+                </button>
+            </div>
+
+            <!-- Pagination -->
+            <div class="sb-pagination-wrap" id="sbPaginationWrap">
+                <button type="button" class="sb-page-btn nav-arrow disabled" aria-label="Previous Page"><i class="bi bi-chevron-left"></i> Prev</button>
+                <button type="button" class="sb-page-btn active">1</button>
+                <button type="button" class="sb-page-btn">2</button>
+                <button type="button" class="sb-page-btn">3</button>
+                <button type="button" class="sb-page-btn nav-arrow" aria-label="Next Page">Next <i class="bi bi-chevron-right"></i></button>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     BOOK DETAILS MODAL
+     ========================================================================== -->
+<div class="modal fade" id="sbBookModal" tabindex="-1" aria-labelledby="modalBookTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content sb-modal-content">
+            <div class="modal-header sb-modal-header">
+                <h3 class="modal-title sb-modal-title" id="modalBookTitle">Book Title</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body sb-modal-body">
+                <div class="sb-modal-grid">
+                    <div class="sb-modal-cover">
+                        <div id="modalBookCover" class="sb-cover-styled atomic" style="height: 100%;">
+                            <div class="sb-cover-title">COVER</div>
+                        </div>
+                    </div>
+                    <div class="sb-modal-meta">
+                        <div class="sb-modal-badges">
+                            <span class="sb-rating-badge" id="modalBookRating">⭐ 4.9 / 5.0</span>
+                            <span class="sb-explore-genre-tag" id="modalBookGenre">Self-Help</span>
+                            <span class="badge bg-light text-dark border" id="modalBookLang">Language: English</span>
+                            <span class="badge bg-light text-dark border" id="modalBookPages">Pages: 320</span>
+                        </div>
+                        <h4 class="h6 text-muted mb-2" id="modalBookAuthor">By James Clear</h4>
+                        <h5 class="h6 fw-bold text-dark mb-1">Synopsis</h5>
+                        <p class="sb-modal-synopsis" id="modalBookSynopsis">Full description text...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer sb-modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="font-size: 0.85rem;">Close</button>
+                <button type="button" class="btn btn-hero-action" id="modalAddBtn" style="font-size: 0.85rem;">
+                    <i class="bi bi-plus-lg"></i> Add to My Books
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/explore.js') if url_for else '/static/js/explore.js' }}"></script>
+{% endblock %}

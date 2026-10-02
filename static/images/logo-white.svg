@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 64" fill="none">
+    <!-- Stylized Open Book with Sprouting Leaves -->
+    <g transform="translate(4, 7)">
+        <!-- Book Base Pages -->
+        <path d="M4 36 C14 30, 26 30, 36 34 L36 12 C26 8, 14 8, 4 14 Z" fill="#285B49" stroke="#3D7B65" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M68 36 C58 30, 46 30, 36 34 L36 12 C46 8, 58 8, 68 14 Z" fill="#285B49" stroke="#3D7B65" stroke-width="1.5" stroke-linejoin="round"/>
+
+        <!-- Inner Light Pages -->
+        <path d="M7 33 C16 28, 26 28, 35 31 L35 12 C26 9, 16 9, 7 14 Z" fill="#FAF7EE"/>
+        <path d="M65 33 C56 28, 46 28, 37 31 L37 12 C46 9, 56 9, 65 14 Z" fill="#FAF7EE"/>
+
+        <!-- Subtle Text Lines on Pages -->
+        <line x1="14" y1="18" x2="28" y2="15" stroke="#C87961" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="14" y1="23" x2="26" y2="20" stroke="#C87961" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="44" y1="15" x2="58" y2="18" stroke="#285B49" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="46" y1="20" x2="58" y2="23" stroke="#285B49" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- Sprouting Green Leaves -->
+        <path d="M36 12 C36 4, 45 0, 52 0 C52 7, 47 12, 36 12 Z" fill="#52B788"/>
+        <path d="M37 11 C34 6, 30 5, 26 6 C27 10, 31 12, 37 11 Z" fill="#74C69D"/>
+    </g>
+
+    <!-- Brand Typography: Font Size 34px, Weight 700 -->
+    <text x="82" y="36" font-family="'Outfit', -apple-system, sans-serif" font-weight="700" font-size="34" fill="#FFFFFF" letter-spacing="-0.5">Smart<tspan fill="#E5A18E">Book</tspan></text>
+    <!-- Tagline: Font Size 12px, Weight 500 -->
+    <text x="83" y="53" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-weight="500" font-size="12" fill="#B7C9C1" letter-spacing="0.2">Discover Books. Your Way.</text>
+</svg>

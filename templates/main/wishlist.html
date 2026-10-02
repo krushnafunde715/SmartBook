@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block title %}My Wishlist — SmartBook{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') if url_for else '/static/css/dashboard.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') if url_for else '/static/css/explore.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/wishlist.css') if url_for else '/static/css/wishlist.css' }}">
+{% endblock %}
+
+{% block content %}
+<div class="sb-dash-layout">
+    <!-- ==========================================================================
+         A. LEFT SIDEBAR (Dark Forest Green #163E30)
+         ========================================================================== -->
+    <aside class="sb-dash-sidebar">
+        <div>
+            <!-- SmartBook Original Approved Brand Logo -->
+            <a href="/" class="sb-dash-brand-wrap" title="SmartBook">
+                <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}" alt="SmartBook Logo" class="sb-dash-brand-logo">
+            </a>
+
+            <!-- Navigation Items -->
+            <ul class="sb-dash-nav">
+                <li>
+                    <a href="/dashboard" class="sb-dash-nav-link">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/explore" class="sb-dash-nav-link">
+                        <i class="bi bi-search"></i>
+                        <span>Explore Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/my-books" class="sb-dash-nav-link">
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>My Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/wishlist" class="sb-dash-nav-link active">
+                        <i class="bi bi-heart-fill"></i>
+                        <span>My Wishlist</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/history" class="sb-dash-nav-link">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Reading History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/profile" class="sb-dash-nav-link">
+                        <i class="bi bi-person"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sb-dash-divider"></div>
+
+            <ul class="sb-dash-nav">
+                <li>
+                    <form action="{{ url_for('auth.logout') if url_for else '/auth/logout' }}" method="POST" class="sb-logout-form m-0 p-0" id="logoutForm">
+                        <button type="submit" class="sb-dash-nav-link logout" title="Log out of SmartBook">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Botanical Stacked Books Illustration -->
+        <div class="sb-dash-sidebar-footer">
+            <img src="/static/images/sidebar-books-art.svg" alt="Botanical Books Illustration" class="sb-dash-sidebar-art">
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+         MAIN VIEWPORT
+         ========================================================================== -->
+    <div class="sb-dash-main">
+        <!-- Top Navigation Bar -->
+        <header class="sb-dash-header">
+            <!-- Global Search Bar -->
+            <div class="sb-dash-search-wrap">
+                <i class="bi bi-search sb-dash-search-icon"></i>
+                <input type="text" class="sb-dash-search-input" id="sbTopSearch" placeholder="Search wishlist books and authors...">
+            </div>
+
+            <!-- User Area -->
+            <div class="sb-dash-user-area">
+                <button type="button" class="sb-dash-notify-btn" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                    <span class="sb-dash-notify-dot"></span>
+                </button>
+
+                <a href="/profile" class="sb-dash-user-profile" title="My Profile" style="text-decoration: none; color: inherit;">
+                    <img src="{{ current_user.avatar_url if current_user and current_user.is_authenticated else 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" alt="{{ current_user.full_name if current_user and current_user.is_authenticated else 'Krushna' }}" class="sb-dash-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Krushna&background=163E30&color=fff'">
+                    <span class="sb-dash-username">{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}</span>
+                    <i class="bi bi-chevron-down ms-1 text-muted" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="sb-dash-body">
+            <!-- Page Header -->
+            <div class="sb-wishlist-header">
+                <div class="sb-wishlist-title-row">
+                    <div>
+                        <h1 class="sb-wishlist-title">My Wishlist</h1>
+                        <p class="sb-wishlist-subtitle">Your next great read is waiting here.</p>
+                    </div>
+                    <div class="sb-wishlist-header-actions">
+                        <span class="sb-wishlist-stat-pill" id="wishlistStatPill">
+                            <i class="bi bi-heart-fill"></i> <strong id="wishlistCountBadge">4</strong> Books Saved
+                        </span>
+                        <a href="/explore" class="btn-discover-books">
+                            <i class="bi bi-compass"></i> Discover Books
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar & Sort Controls -->
+            <div class="sb-wishlist-toolbar">
+                <div class="sb-wishlist-search-wrap">
+                    <i class="bi bi-search sb-wishlist-search-icon"></i>
+                    <input type="text" class="sb-wishlist-search-input" id="wishlistSearch" placeholder="Filter wishlist by title, author, keyword...">
+                </div>
+
+                <div class="sb-wishlist-filters">
+                    <!-- Sort By -->
+                    <select class="sb-wishlist-select" id="wishlistSortSelect" aria-label="Sort wishlist">
+                        <option value="added-desc">Sort by: Recently Added</option>
+                        <option value="title-asc">Sort by: Title (A–Z)</option>
+                        <option value="rating-desc">Sort by: Highest Rated</option>
+                    </select>
+
+                    <!-- Reset Filters -->
+                    <button type="button" class="btn-clear-filters" id="wishlistClearFilters">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Wishlist Book Collection Grid -->
+            <div class="sb-wishlist-grid" id="wishlistGrid">
+                <!-- Dynamically rendered via JavaScript -->
+            </div>
+
+            <!-- Tasteful Empty State -->
+            <div class="sb-wishlist-empty" id="wishlistEmptyState">
+                <i class="bi bi-heartbreak sb-wishlist-empty-icon"></i>
+                <h3 class="sb-wishlist-empty-title">Your reading wishlist is waiting to grow.</h3>
+                <p class="sb-wishlist-empty-desc">Explore the library and save books you'd love to read next.</p>
+                <a href="/explore" class="btn-shelf-primary" style="max-width: 190px;">
+                    <i class="bi bi-compass"></i> Discover Books
+                </a>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     BOOK DETAILS MODAL
+     ========================================================================== -->
+<div class="modal fade" id="sbWishModal" tabindex="-1" aria-labelledby="modalWishTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content sb-modal-content">
+            <div class="modal-header sb-modal-header">
+                <h3 class="modal-title sb-modal-title" id="modalWishTitle">Book Title</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body sb-modal-body">
+                <div class="sb-modal-grid">
+                    <div class="sb-modal-cover">
+                        <div id="modalWishCover" class="sb-cover-styled thinking" style="height: 100%;">
+                            <div class="sb-cover-title">COVER</div>
+                        </div>
+                    </div>
+                    <div class="sb-modal-meta">
+                        <div class="sb-modal-badges">
+                            <span class="sb-rating-badge" id="modalWishRating">⭐ 4.9 / 5.0</span>
+                            <span class="sb-explore-genre-tag" id="modalWishGenre">Genre</span>
+                            <span class="badge bg-light text-dark border" id="modalWishPages">Pages: 300</span>
+                        </div>
+                        <h4 class="h6 text-muted mb-2" id="modalWishAuthor">By Author</h4>
+                        <h5 class="h6 fw-bold text-dark mb-1">Synopsis</h5>
+                        <p class="sb-modal-synopsis" id="modalWishSynopsis">Full description text...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer sb-modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="font-size: 0.85rem;">Close</button>
+                <button type="button" class="btn btn-shelf-primary" id="modalWishAddBtn" style="font-size: 0.85rem; padding: 0.5rem 1.2rem; height: auto;">
+                    <i class="bi bi-plus-lg"></i> Add to My Books
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/wishlist.js') if url_for else '/static/js/wishlist.js' }}"></script>
+{% endblock %}

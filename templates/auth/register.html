@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% set active_page = 'register' %}
+
+{% block title %}Create Account — SmartBook{% endblock %}
+
+{% block alerts %}{% endblock %}
+
+{% block content %}
+<div class="sb-login-viewport">
+    <!-- Smooth Ivory Gradient Overlay on Left Side -->
+    <div class="sb-login-overlay"></div>
+
+    <!-- Main Content Container (Left ~42% width) -->
+    <div class="sb-login-content-wrapper">
+        <div class="sb-login-card">
+            <!-- SmartBook Logo (approx 360px wide) -->
+            <a href="{{ url_for('main.index') if url_for else '/' }}" class="sb-login-logo-wrap" title="SmartBook">
+                <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}"
+                     alt="SmartBook Logo"
+                     class="sb-login-logo">
+            </a>
+
+            <!-- Heading: Create Account -->
+            <h1 class="sb-login-heading">
+                Create <span class="sb-login-heading-accent">Account</span>
+            </h1>
+            <p class="sb-register-subtitle">Join SmartBook and start your reading journey.</p>
+
+            <!-- Terracotta Accent Line -->
+            <div class="sb-login-accent-line"></div>
+
+            {% include 'components/alerts.html' %}
+
+            <!-- Registration Form (500px width on 1440px desktop) -->
+            <form id="registerForm" action="{{ url_for('auth.register') if url_for else '/auth/register' }}" method="POST" class="sb-login-form" novalidate>
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label for="full_name" class="form-label sb-login-label">Full Name</label>
+                    <input type="text"
+                           class="form-control sb-login-input"
+                           id="full_name"
+                           name="full_name"
+                           placeholder="First and last name"
+                           required
+                           autocomplete="name">
+                    <div class="invalid-feedback" id="nameFeedback">Please enter your full name.</div>
+                </div>
+
+                <!-- Email Address -->
+                <div class="mb-3">
+                    <label for="email" class="form-label sb-login-label">Email Address</label>
+                    <input type="email"
+                           class="form-control sb-login-input"
+                           id="email"
+                           name="email"
+                           placeholder="name@example.com"
+                           required
+                           autocomplete="email">
+                    <div class="invalid-feedback" id="emailFeedback">Please enter a valid email address.</div>
+                </div>
+
+                <!-- Password & Confirm Password (2 Columns) -->
+                <div class="row g-2 mb-3">
+                    <div class="col-sm-6">
+                        <label for="password" class="form-label sb-login-label">Password</label>
+                        <div class="sb-password-wrap position-relative">
+                            <input type="password"
+                                   class="form-control sb-login-input pe-5"
+                                   id="password"
+                                   name="password"
+                                   placeholder="Min 8 characters"
+                                   minlength="8"
+                                   required
+                                   autocomplete="new-password">
+                            <button type="button" class="btn sb-password-toggle sb-toggle-password" data-target="password" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback" id="passwordFeedback">Password must be at least 8 characters.</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="confirm_password" class="form-label sb-login-label">Confirm Password</label>
+                        <div class="sb-password-wrap position-relative">
+                            <input type="password"
+                                   class="form-control sb-login-input pe-5"
+                                   id="confirm_password"
+                                   name="confirm_password"
+                                   placeholder="Repeat password"
+                                   required
+                                   autocomplete="new-password">
+                            <button type="button" class="btn sb-password-toggle sb-toggle-password" data-target="confirm_password" aria-label="Toggle confirm password visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback" id="confirmFeedback">Passwords do not match.</div>
+                    </div>
+                </div>
+
+                <!-- Terms & Conditions Checkbox -->
+                <div class="form-check mb-4">
+                    <input class="form-check-input sb-login-checkbox" type="checkbox" id="terms" name="terms" required>
+                    <label class="form-check-label sb-login-check-label" for="terms">
+                        I agree to the <a href="#" class="sb-login-switch-link" onclick="SmartAlert.info('The SmartBook Terms & Conditions and Privacy Policy documentation will be available in future updates.', 'Terms & Privacy'); return false;">Terms & Conditions</a> and Privacy Policy
+                    </label>
+                    <div class="invalid-feedback" id="termsFeedback">You must agree before proceeding.</div>
+                </div>
+
+                <!-- Primary Create Account Button (~68px high) -->
+                <button type="submit" class="btn btn-login-primary mb-3">
+                    <i class="bi bi-person-plus fs-5"></i> Create Account
+                </button>
+
+                <!-- Switch Text -->
+                <div class="sb-login-switch-text">
+                    Already have an account?
+                    <a href="{{ url_for('auth.login') if url_for else '/auth/login' }}" class="sb-login-switch-link">Log In</a>
+                </div>
+
+                <!-- Back to Home Link -->
+                <div class="sb-login-back-wrap">
+                    <a href="{{ url_for('main.index') if url_for else '/' }}" class="sb-login-back-link">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Home
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

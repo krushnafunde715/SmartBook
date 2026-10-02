@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 220" fill="none">
+    <!-- Ambient Green Shadow -->
+    <ellipse cx="90" cy="195" rx="85" ry="12" fill="#0E291E" opacity="0.8"/>
+
+    <!-- Botanical Leaves Reaching Up Behind Books -->
+    <g opacity="0.35">
+        <path d="M15 190 C25 140 60 90 90 40 C75 75 55 120 40 190 Z" fill="#2E7D5C"/>
+        <!-- Left Leaves -->
+        <path d="M45 130 C30 115 15 120 8 135 C18 145 35 140 45 130 Z" fill="#3D9B73"/>
+        <path d="M60 100 C40 85 25 90 15 105 C25 118 48 112 60 100 Z" fill="#4FB387"/>
+        <path d="M75 70 C55 55 40 60 30 75 C42 88 62 82 75 70 Z" fill="#62C799"/>
+        <path d="M90 40 C75 25 60 30 52 42 C62 55 80 50 90 40 Z" fill="#78DBAC"/>
+    </g>
+
+    <!-- Foreground Leaves Sprouting Left -->
+    <g opacity="0.45">
+        <path d="M5 200 C15 165 35 135 60 110" stroke="#3D9B73" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M20 180 C5 172 -2 180 0 192 C10 196 18 190 20 180 Z" fill="#4FB387"/>
+        <path d="M35 155 C20 145 12 152 14 165 C25 170 34 165 35 155 Z" fill="#52B788"/>
+        <path d="M50 130 C35 120 28 126 30 138 C42 144 48 138 50 130 Z" fill="#74C69D"/>
+    </g>
+
+    <!-- Stack of 3 Books -->
+    <!-- Book 1 (Bottom): Deep Terracotta / Brown Leather Hardcover -->
+    <g transform="translate(10, 160)">
+        <rect x="0" y="0" width="130" height="28" rx="4" fill="#6E3826"/>
+        <rect x="2" y="2" width="124" height="24" rx="3" fill="#8D4932"/>
+        <!-- Spine Accents -->
+        <line x1="12" y1="2" x2="12" y2="26" stroke="#522718" stroke-width="2"/>
+        <line x1="16" y1="2" x2="16" y2="26" stroke="#B86548" stroke-width="1.5"/>
+        <line x1="28" y1="2" x2="28" y2="26" stroke="#522718" stroke-width="1"/>
+        <!-- Pages Edge on Right -->
+        <rect x="120" y="4" width="8" height="20" rx="1" fill="#FAF5EB"/>
+        <line x1="122" y1="7" x2="122" y2="21" stroke="#E2D8C3" stroke-width="1"/>
+    </g>
+
+    <!-- Book 2 (Middle): Forest Green / Sage Hardcover -->
+    <g transform="translate(14, 130)">
+        <rect x="0" y="0" width="120" height="27" rx="4" fill="#204E3B"/>
+        <rect x="2" y="2" width="114" height="23" rx="3" fill="#2C6950"/>
+        <!-- Spine Accents -->
+        <line x1="12" y1="2" x2="12" y2="25" stroke="#16392B" stroke-width="2"/>
+        <line x1="15" y1="2" x2="15" y2="25" stroke="#489775" stroke-width="1.5"/>
+        <!-- Gold foil decorative box -->
+        <rect x="35" y="6" width="40" height="15" rx="2" stroke="#E2B15E" stroke-width="1" fill="none" opacity="0.8"/>
+        <!-- Pages Edge -->
+        <rect x="110" y="4" width="8" height="19" rx="1" fill="#FAF5EB"/>
+    </g>
+
+    <!-- Book 3 (Top): Vintage Sienna / Ochre Book -->
+    <g transform="translate(18, 102)">
+        <rect x="0" y="0" width="108" height="25" rx="3" fill="#8C532B"/>
+        <rect x="2" y="2" width="102" height="21" rx="2" fill="#B36E3B"/>
+        <!-- Spine Accents -->
+        <line x1="10" y1="2" x2="10" y2="23" stroke="#663A1C" stroke-width="1.5"/>
+        <line x1="13" y1="2" x2="13" y2="23" stroke="#DDA16E" stroke-width="1.5"/>
+        <!-- Bookmark Ribbon Hanging Down -->
+        <path d="M45 20 L45 55 L51 50 L57 55 L57 20 Z" fill="#C87961"/>
+        <!-- Pages Edge -->
+        <rect x="98" y="4" width="8" height="17" rx="1" fill="#FAF5EB"/>
+    </g>
+</svg>

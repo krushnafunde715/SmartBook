@@ -1,0 +1,140 @@
+/* ==========================================================================
+   SMARTBOOK — GLOBAL STYLESHEET
+   Editorial Bookstore Aesthetic
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('./variables.css');
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--sb-font-body);
+    background-color: var(--sb-bg-lavender-grey);
+    color: var(--sb-charcoal);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography Hierarchy */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: var(--sb-font-heading);
+    color: var(--sb-charcoal);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0.5rem;
+}
+
+p {
+    color: var(--sb-charcoal-muted);
+    margin-bottom: 1rem;
+}
+
+a {
+    color: var(--sb-forest-green);
+    text-decoration: none;
+    transition: color var(--sb-transition-fast);
+}
+
+a:hover {
+    color: var(--sb-forest-green-hover);
+}
+
+/* Buttons */
+.btn {
+    font-family: var(--sb-font-heading);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.75rem 1.4rem;
+    border-radius: var(--sb-radius-md);
+    transition: all var(--sb-transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid transparent;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-forest {
+    background-color: var(--sb-forest-green);
+    border-color: var(--sb-forest-green);
+    color: var(--sb-bg-white);
+    box-shadow: var(--sb-shadow-btn);
+}
+
+.btn-forest:hover, .btn-forest:focus {
+    background-color: var(--sb-forest-green-hover);
+    border-color: var(--sb-forest-green-hover);
+    color: var(--sb-bg-white);
+    transform: translateY(-1px);
+    box-shadow: var(--sb-shadow-btn-hover);
+}
+
+.btn-outline-forest {
+    background-color: transparent;
+    border-color: var(--sb-forest-green);
+    color: var(--sb-forest-green);
+}
+
+.btn-outline-forest:hover, .btn-outline-forest:focus {
+    background-color: var(--sb-forest-green-subtle);
+    border-color: var(--sb-forest-green);
+    color: var(--sb-forest-green);
+    transform: translateY(-1px);
+}
+
+.btn-terracotta {
+    background-color: var(--sb-terracotta);
+    border-color: var(--sb-terracotta);
+    color: var(--sb-bg-white);
+}
+
+.btn-terracotta:hover, .btn-terracotta:focus {
+    background-color: var(--sb-terracotta-hover);
+    border-color: var(--sb-terracotta-hover);
+    color: var(--sb-bg-white);
+    transform: translateY(-1px);
+}
+
+/* Form Inputs */
+.form-control, .form-select {
+    font-family: var(--sb-font-body);
+    font-size: 0.925rem;
+    padding: 0.7rem 0.95rem;
+    border: 1.5px solid var(--sb-border-light);
+    border-radius: var(--sb-radius-md);
+    background-color: var(--sb-bg-white);
+    color: var(--sb-charcoal);
+    transition: all var(--sb-transition-fast);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--sb-forest-green);
+    box-shadow: 0 0 0 3.5px rgba(35, 78, 62, 0.12);
+    outline: none;
+    background-color: var(--sb-bg-white);
+    color: var(--sb-charcoal);
+}
+
+.form-label {
+    font-family: var(--sb-font-heading);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--sb-charcoal);
+    margin-bottom: 0.35rem;
+}

@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% block title %}Reading History — SmartBook{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') if url_for else '/static/css/dashboard.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/explore.css') if url_for else '/static/css/explore.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/my_books.css') if url_for else '/static/css/my_books.css' }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/history.css') if url_for else '/static/css/history.css' }}">
+{% endblock %}
+
+{% block content %}
+<div class="sb-dash-layout">
+    <!-- ==========================================================================
+         A. LEFT SIDEBAR (Dark Forest Green #163E30)
+         ========================================================================== -->
+    <aside class="sb-dash-sidebar">
+        <div>
+            <!-- SmartBook Original Approved Brand Logo -->
+            <a href="/" class="sb-dash-brand-wrap" title="SmartBook">
+                <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}" alt="SmartBook Logo" class="sb-dash-brand-logo">
+            </a>
+
+            <!-- Navigation Items -->
+            <ul class="sb-dash-nav">
+                <li>
+                    <a href="/dashboard" class="sb-dash-nav-link">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/explore" class="sb-dash-nav-link">
+                        <i class="bi bi-search"></i>
+                        <span>Explore Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/my-books" class="sb-dash-nav-link">
+                        <i class="bi bi-journal-bookmark"></i>
+                        <span>My Books</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/wishlist" class="sb-dash-nav-link">
+                        <i class="bi bi-heart"></i>
+                        <span>My Wishlist</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/history" class="sb-dash-nav-link active">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Reading History</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/profile" class="sb-dash-nav-link">
+                        <i class="bi bi-person"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sb-dash-divider"></div>
+
+            <ul class="sb-dash-nav">
+                <li>
+                    <form action="{{ url_for('auth.logout') if url_for else '/auth/logout' }}" method="POST" class="sb-logout-form m-0 p-0" id="logoutForm">
+                        <button type="submit" class="sb-dash-nav-link logout" title="Log out of SmartBook">
+                            <i class="bi bi-box-arrow-left"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Sidebar Botanical Stacked Books Illustration -->
+        <div class="sb-dash-sidebar-footer">
+            <img src="/static/images/sidebar-books-art.svg" alt="Botanical Books Illustration" class="sb-dash-sidebar-art">
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+         MAIN VIEWPORT
+         ========================================================================== -->
+    <div class="sb-dash-main">
+        <!-- Top Navigation Bar -->
+        <header class="sb-dash-header">
+            <!-- Global Search Bar -->
+            <div class="sb-dash-search-wrap">
+                <i class="bi bi-search sb-dash-search-icon"></i>
+                <input type="text" class="sb-dash-search-input" id="sbTopSearch" placeholder="Search finished books and reading history...">
+            </div>
+
+            <!-- User Area -->
+            <div class="sb-dash-user-area">
+                <button type="button" class="sb-dash-notify-btn" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                    <span class="sb-dash-notify-dot"></span>
+                </button>
+
+                <a href="/profile" class="sb-dash-user-profile" title="My Profile" style="text-decoration: none; color: inherit;">
+                    <img src="{{ current_user.avatar_url if current_user and current_user.is_authenticated else 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" alt="{{ current_user.full_name if current_user and current_user.is_authenticated else 'Krushna' }}" class="sb-dash-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Krushna&background=163E30&color=fff'">
+                    <span class="sb-dash-username">{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}</span>
+                    <i class="bi bi-chevron-down ms-1 text-muted" style="font-size: 0.75rem;"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="sb-dash-body">
+            <!-- Page Header -->
+            <div class="sb-history-header">
+                <div class="sb-history-title-row">
+                    <div>
+                        <h1 class="sb-history-title">Reading History</h1>
+                        <p class="sb-history-subtitle">Every book you've finished is a chapter in your journey.</p>
+                    </div>
+                    <span class="sb-history-stat-pill" id="historyFinishedPill">
+                        <i class="bi bi-check2-circle"></i> <strong id="historyFinishedCount">{{ stats.completed_books if stats else (completed_books|length if completed_books else 0) }}</strong> Books Completed
+                    </span>
+                </div>
+            </div>
+
+            <!-- 3. Reading Summary Metrics Grid -->
+            <div class="sb-history-metrics-grid">
+                <!-- Card 1: Books Completed -->
+                <div class="sb-history-metric-card">
+                    <div class="sb-metric-icon-wrap completed">
+                        <i class="bi bi-check2-all"></i>
+                    </div>
+                    <div class="sb-metric-info">
+                        <span class="sb-metric-label">Books Completed</span>
+                        <span class="sb-metric-value" id="metricCompleted">{{ stats.completed_books if stats else (completed_books|length if completed_books else 0) }}</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Pages Read -->
+                <div class="sb-history-metric-card">
+                    <div class="sb-metric-icon-wrap pages">
+                        <i class="bi bi-book-half"></i>
+                    </div>
+                    <div class="sb-metric-info">
+                        <span class="sb-metric-label">Pages Read</span>
+                        <span class="sb-metric-value" id="metricPages">{{ "{:,}".format(stats.total_pages_read) if stats else ("{:,}".format(total_pages) if total_pages else 0) }}</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Currently Reading -->
+                <div class="sb-history-metric-card">
+                    <div class="sb-metric-icon-wrap active">
+                        <i class="bi bi-journal-bookmark"></i>
+                    </div>
+                    <div class="sb-metric-info">
+                        <span class="sb-metric-label">Currently Reading</span>
+                        <span class="sb-metric-value" id="metricActive">{{ stats.currently_reading_books if stats else (active_count if active_count else 0) }}</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Reading Streak -->
+                <div class="sb-history-metric-card">
+                    <div class="sb-metric-icon-wrap streak">
+                        <i class="bi bi-fire"></i>
+                    </div>
+                    <div class="sb-metric-info">
+                        <span class="sb-metric-label">Reading Streak</span>
+                        <span class="sb-metric-value" id="metricStreak">{{ stats.reading_streak_days if stats else (14 if completed_books else 0) }} Days</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Toolbar & Search/Filter Controls -->
+            <div class="sb-history-toolbar">
+                <div class="sb-history-search-wrap">
+                    <i class="bi bi-search sb-history-search-icon"></i>
+                    <input type="text" class="sb-history-search-input" id="historySearch" placeholder="Search finished books by title, author...">
+                </div>
+
+                <div class="sb-history-filters">
+                    <!-- Genre Filter -->
+                    <select class="sb-history-select" id="historyGenreSelect" aria-label="Filter by genre">
+                        <option value="all">All Genres</option>
+                        <option value="Self-Help">Self-Help</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Biography">Biography</option>
+                        <option value="Psychology">Psychology</option>
+                    </select>
+
+                    <!-- Sort By -->
+                    <select class="sb-history-select" id="historySortSelect" aria-label="Sort history">
+                        <option value="completed-desc">Most Recent</option>
+                        <option value="completed-asc">Oldest First</option>
+                        <option value="rating-desc">Highest Rated</option>
+                    </select>
+
+                    <!-- Reset Filters -->
+                    <button type="button" class="btn-clear-filters" id="historyClearFilters">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 5. Completed Books Collection Grid -->
+            <div class="sb-history-grid" id="historyGrid">
+                <!-- Dynamically rendered via JavaScript -->
+            </div>
+
+            <!-- 6. Tasteful Empty State -->
+            <div class="sb-history-empty" id="historyEmptyState">
+                <i class="bi bi-clock-history sb-history-empty-icon"></i>
+                <h3 class="sb-history-empty-title">Your reading journey starts with one page.</h3>
+                <p class="sb-history-empty-desc">Complete your first book and it will appear here with milestones and reading summaries.</p>
+                <a href="/explore" class="btn-shelf-primary" style="max-width: 190px;">
+                    <i class="bi bi-book"></i> Explore Books
+                </a>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- ==========================================================================
+     BOOK DETAILS MODAL
+     ========================================================================== -->
+<div class="modal fade" id="sbHistoryModal" tabindex="-1" aria-labelledby="modalHistTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content sb-modal-content">
+            <div class="modal-header sb-modal-header">
+                <h3 class="modal-title sb-modal-title" id="modalHistTitle">Book Title</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body sb-modal-body">
+                <div class="sb-modal-grid">
+                    <div class="sb-modal-cover">
+                        <div id="modalHistCover" class="sb-cover-styled atomic" style="height: 100%;">
+                            <div class="sb-cover-title">COVER</div>
+                        </div>
+                    </div>
+                    <div class="sb-modal-meta">
+                        <div class="sb-modal-badges">
+                            <span class="sb-rating-badge" id="modalHistRating">⭐ 5.0 / 5.0</span>
+                            <span class="sb-explore-genre-tag" id="modalHistGenre">Self-Help</span>
+                            <span class="badge bg-light text-dark border" id="modalHistPages">Pages: 256</span>
+                            <span class="badge bg-light text-dark border text-success" id="modalHistDate">Finished Sep 28, 2026</span>
+                        </div>
+                        <h4 class="h6 text-muted mb-2" id="modalHistAuthor">By Author</h4>
+                        <h5 class="h6 fw-bold text-dark mb-1">Reader's Review & Key Takeaway</h5>
+                        <p class="sb-modal-synopsis" id="modalHistReview">Review text...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer sb-modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" style="font-size: 0.85rem;">Close</button>
+                <button type="button" class="btn btn-shelf-primary" id="modalHistRereadBtn" style="font-size: 0.85rem; padding: 0.5rem 1.2rem; height: auto;">
+                    <i class="bi bi-arrow-repeat"></i> Read Again
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/history.js') if url_for else '/static/js/history.js' }}"></script>
+{% endblock %}
