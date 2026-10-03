@@ -40,6 +40,14 @@ def create_app(config_name=None):
     login_manager.login_message = 'Please log in to access your digital library.'
     login_manager.login_message_category = 'info'
 
+    @login_manager.unauthorized_handler
+    def unauthorized():
+        if request.path.startswith('/api/') or request.is_json or request.accept_mimetypes.best == 'application/json':
+            return jsonify({'success': False, 'message': 'Authentication required. Please log in.'}), 401
+        flash(login_manager.login_message, login_manager.login_message_category)
+        next_target = request.full_path.rstrip('?') if request.query_string else request.path
+        return redirect(url_for(login_manager.login_view, next=next_target if request.path != '/auth/login' else None))
+
     @login_manager.user_loader
     def load_user(user_id):
         try:
