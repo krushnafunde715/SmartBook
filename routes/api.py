@@ -225,7 +225,7 @@ def api_books():
     language = request.args.get('language', 'all').strip().lower()
     sort_by = request.args.get('sort', 'rating-desc')
 
-    books_q = Book.query
+    books_q = Book.query.options(selectinload(Book.genres))
 
     if language != 'all':
         books_q = books_q.filter(Book.language.ilike(language))
@@ -253,7 +253,7 @@ def api_books():
 @api_bp.route('/books/<int:book_id>', methods=['GET'])
 def api_book_details(book_id):
     """Retrieves single book entity"""
-    book = db.session.get(Book, book_id)
+    book = Book.query.options(selectinload(Book.genres)).filter_by(id=book_id).first()
     if not book:
         return jsonify({'success': False, 'message': 'Book not found'}), 404
     return jsonify({'success': True, 'book': book.to_dict()})
@@ -279,7 +279,7 @@ def api_library():
             .filter_by(user_id=target_user.id)
             .all()
         )
-        stats = get_user_reading_stats(target_user.id)
+        stats = get_user_reading_stats(target_user.id, user_books=user_books)
         book_dicts = [ub.to_dict() for ub in user_books]
         return jsonify({
             'success': True,
@@ -475,7 +475,13 @@ def api_wishlist():
         return jsonify({'success': False, 'message': 'User not found'}), 404
 
     if request.method == 'GET':
-        items = WishlistItem.query.filter_by(user_id=target_user.id).order_by(WishlistItem.added_at.desc()).all()
+        items = (
+            WishlistItem.query
+            .options(selectinload(WishlistItem.book).selectinload(Book.genres))
+            .filter_by(user_id=target_user.id)
+            .order_by(WishlistItem.added_at.desc())
+            .all()
+        )
         item_dicts = [w.to_dict() for w in items]
         return jsonify({'success': True, 'items': item_dicts, 'wishlist': item_dicts, 'count': len(items)})
 
@@ -618,11 +624,22 @@ def api_history():
     if not target_user:
         return jsonify({'success': False, 'message': 'User not found'}), 404
 
-    user_books = UserBook.query.filter_by(user_id=target_user.id).all()
+    user_books = (
+        UserBook.query
+        .options(selectinload(UserBook.book).selectinload(Book.genres))
+        .filter_by(user_id=target_user.id)
+        .all()
+    )
     completed = [ub for ub in user_books if normalize_status(ub.status) == STATUS_COMPLETED]
     completed.sort(key=lambda ub: ub.completed_at or ub.updated_at or datetime.min, reverse=True)
-    events = ReadingHistory.query.filter_by(user_id=target_user.id).order_by(ReadingHistory.created_at.desc()).all()
-    stats = get_user_reading_stats(target_user.id)
+    events = (
+        ReadingHistory.query
+        .options(selectinload(ReadingHistory.book).selectinload(Book.genres))
+        .filter_by(user_id=target_user.id)
+        .order_by(ReadingHistory.created_at.desc())
+        .all()
+    )
+    stats = get_user_reading_stats(target_user.id, user_books=user_books)
 
     event_dicts = [e.to_dict() for e in events]
     return jsonify({
@@ -641,7 +658,7 @@ def api_recommendations():
     if not target_user:
         return jsonify({'success': False, 'message': 'User not found'}), 404
 
-    all_books = Book.query.all()
+    all_books = Book.query.options(selectinload(Book.genres)).all()
     recs = get_recommendations_for_user(target_user, all_books, limit=8)
 
     results = []
@@ -669,7 +686,7 @@ def api_recommendations_explain(book_id):
     if not target_user:
         return jsonify({'success': False, 'message': 'User not found'}), 404
 
-    book = db.session.get(Book, book_id)
+    book = Book.query.options(selectinload(Book.genres)).filter_by(id=book_id).first()
     if not book:
         return jsonify({'success': False, 'message': 'Book not found'}), 404
 

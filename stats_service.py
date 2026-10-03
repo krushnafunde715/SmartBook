@@ -4,6 +4,7 @@ Authoritative Single Source of Truth for Reading Counts, Shelves, and Progress.
 """
 
 from datetime import datetime, date
+from sqlalchemy.orm import selectinload
 from models import db, User, Book, UserBook, WishlistItem, ReadingHistory, utcnow
 
 # Standard Canonical Status Constants
@@ -34,10 +35,11 @@ def normalize_status(raw_status):
     return STATUS_WANT_TO_READ
 
 
-def get_user_reading_stats(user_id):
+def get_user_reading_stats(user_id, user_books=None):
     """
     Calculates unified, authoritative reading statistics directly from database UserBook records.
     Guarantees cross-page consistency between Dashboard, My Books, Reading History, and Profile.
+    Accepts pre-loaded user_books collection to eliminate duplicate database queries.
     """
     if not user_id:
         return {
@@ -50,7 +52,8 @@ def get_user_reading_stats(user_id):
             'reading_streak_days': 0
         }
 
-    user_books = UserBook.query.filter_by(user_id=user_id).all()
+    if user_books is None:
+        user_books = UserBook.query.options(selectinload(UserBook.book)).filter_by(user_id=user_id).all()
 
     completed_list = []
     reading_list = []

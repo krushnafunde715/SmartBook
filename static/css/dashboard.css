@@ -33,6 +33,41 @@
     box-shadow: 2px 0 12px rgba(0, 0, 0, 0.04);
 }
 
+/* Sidebar Top Row: Brand & Mobile Close Button */
+.sb-sidebar-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.85rem;
+    gap: 0.5rem;
+}
+
+.sb-sidebar-top-row .sb-dash-brand-wrap {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.sb-sidebar-close-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.85);
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 8px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.sb-sidebar-close-btn:hover {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.15);
+}
+
 /* Brand Section: Soft Ivory Translucent Background with Gentle Glow */
 .sb-dash-brand-wrap {
     display: flex;
@@ -182,6 +217,40 @@ button.sb-dash-nav-link {
     position: sticky;
     top: 0;
     z-index: 90;
+}
+
+/* Header Left Area (Mobile toggle + Search) */
+.sb-dash-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+    max-width: 500px;
+}
+
+/* Mobile Hamburger Toggle Button */
+.sb-mobile-toggle-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background-color: #FFFFFF;
+    border: 1px solid #E2DDD2;
+    border-radius: 10px;
+    color: #163E30;
+    font-size: 1.45rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.sb-mobile-toggle-btn:hover {
+    background-color: #E8F2ED;
+    border-color: #163E30;
+    color: #163E30;
 }
 
 /* Search Bar */
@@ -1059,6 +1128,33 @@ button.sb-dash-nav-link {
 }
 
 /* ==========================================================================
+   MOBILE BACKDROP & SCROLL LOCK
+   ========================================================================== */
+.sb-sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(18, 38, 30, 0.6);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.sb-sidebar-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+body.sb-sidebar-open {
+    overflow: hidden !important;
+}
+
+/* ==========================================================================
    RESPONSIVE BREAKPOINTS
    ========================================================================== */
 @media (max-width: 1280px) {
@@ -1071,26 +1167,53 @@ button.sb-dash-nav-link {
 }
 
 @media (max-width: 991.98px) {
+    .sb-mobile-toggle-btn {
+        display: flex;
+    }
+
+    .sb-sidebar-close-btn {
+        display: flex;
+    }
+
     .sb-dash-sidebar {
-        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        height: 100vh;
+        width: 270px;
+        min-width: 270px;
+        max-width: 85vw;
+        z-index: 1050;
+        transform: translateX(-100%);
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex !important;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
     }
+
+    .sb-dash-sidebar.show {
+        transform: translateX(0);
+    }
+
     .sb-dash-header {
-        padding: 0.75rem 1.25rem;
+        padding: 0.75rem 1.15rem;
+        gap: 0.85rem;
     }
+
     .sb-dash-body {
-        padding: 0.75rem 1.25rem 2rem 1.25rem;
+        padding: 0.75rem 1.15rem 2rem 1.15rem;
     }
+
     .sb-dash-stats-row {
         grid-template-columns: 1fr;
     }
+
     .sb-prog-grid {
         grid-template-columns: 1fr;
     }
-    .sb-dash-hero-content {
-        padding: 1.5rem;
-    }
 
     .sb-dash-hero-content {
+        padding: 1.5rem;
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
@@ -1107,14 +1230,42 @@ button.sb-dash-nav-link {
     .sb-quote-text {
         font-size: 1.1rem;
     }
-
 }
 
 @media (max-width: 575.98px) {
     .sb-rec-grid {
         grid-template-columns: 1fr;
     }
+
     .sb-dash-hero-title {
         font-size: 1.75rem;
+    }
+
+    .sb-dash-header {
+        padding: 0.6rem 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .sb-dash-header-left {
+        gap: 0.45rem;
+    }
+
+    .sb-dash-search-input {
+        padding: 0.45rem 0.65rem 0.45rem 2.1rem;
+        font-size: 0.82rem;
+        height: 38px;
+    }
+
+    .sb-dash-search-icon {
+        left: 0.75rem;
+        font-size: 0.82rem;
+    }
+
+    .sb-dash-user-area {
+        gap: 0.6rem;
+    }
+
+    .sb-dash-body {
+        padding: 0.5rem 0.75rem 1.5rem 0.75rem;
     }
 }

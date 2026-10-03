@@ -11,12 +11,17 @@
     <!-- ==========================================================================
          A. LEFT SIDEBAR (Dark Forest Green #163E30)
          ========================================================================== -->
-    <aside class="sb-dash-sidebar">
+    <aside class="sb-dash-sidebar" id="sbDashSidebar">
         <div>
-            <!-- SmartBook Original Approved Brand Logo -->
-            <a href="/" class="sb-dash-brand-wrap" title="SmartBook">
-                <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}" alt="SmartBook Logo" class="sb-dash-brand-logo">
-            </a>
+            <!-- SmartBook Brand Logo & Mobile Close Button -->
+            <div class="sb-sidebar-top-row">
+                <a href="/" class="sb-dash-brand-wrap" title="SmartBook">
+                    <img src="{{ url_for('static', filename='images/logo.svg') if url_for else '/static/images/logo.svg' }}" alt="SmartBook Logo" class="sb-dash-brand-logo">
+                </a>
+                <button type="button" class="sb-sidebar-close-btn d-lg-none" id="sbSidebarCloseBtn" aria-label="Close navigation menu">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
 
             <!-- Navigation Items -->
             <ul class="sb-dash-nav">
@@ -84,10 +89,16 @@
     <div class="sb-dash-main">
         <!-- B. Top Navigation Bar -->
         <header class="sb-dash-header">
-            <!-- Search Bar -->
-            <div class="sb-dash-search-wrap">
-                <i class="bi bi-search sb-dash-search-icon"></i>
-                <input type="text" class="sb-dash-search-input" id="sbBookSearch" placeholder="Search books, authors, or genres...">
+            <div class="sb-dash-header-left">
+                <!-- Hamburger Menu Button -->
+                <button type="button" class="sb-mobile-toggle-btn d-lg-none" id="sbMobileToggleBtn" aria-label="Toggle navigation" title="Toggle Navigation Menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                <!-- Search Bar -->
+                <div class="sb-dash-search-wrap">
+                    <i class="bi bi-search sb-dash-search-icon"></i>
+                    <input type="text" class="sb-dash-search-input" id="sbBookSearch" placeholder="Search books, authors, or genres...">
+                </div>
             </div>
 
             <!-- User Area -->
@@ -97,11 +108,25 @@
                     <span class="sb-dash-notify-dot"></span>
                 </button>
 
-                <a href="/profile" class="sb-dash-user-profile" title="My Profile" style="text-decoration: none; color: inherit;">
-                    <img src="{{ current_user.avatar_url if current_user and current_user.is_authenticated else 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" alt="{{ current_user.full_name if current_user and current_user.is_authenticated else 'Krushna' }}" class="sb-dash-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Krushna&background=163E30&color=fff'">
-                    <span class="sb-dash-username">{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}</span>
-                    <i class="bi bi-chevron-down ms-1 text-muted" style="font-size: 0.75rem;"></i>
-                </a>
+                <div class="dropdown">
+                    <a href="#" class="sb-dash-user-profile dropdown-toggle text-decoration-none" id="userMenuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="User Menu">
+                        <img src="{{ current_user.avatar_url if current_user and current_user.is_authenticated else 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" alt="{{ current_user.full_name if current_user and current_user.is_authenticated else 'Krushna' }}" class="sb-dash-avatar" onerror="this.src='https://ui-avatars.com/api/?name=Krushna&background=163E30&color=fff'">
+                        <span class="sb-dash-username d-none d-sm-inline">{{ current_user.full_name.split(' ')[0] if current_user and current_user.is_authenticated else 'Krushna' }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-smartbook shadow-sm" aria-labelledby="userMenuDropdown">
+                        <li><a class="dropdown-item-smartbook" href="/profile"><i class="bi bi-person me-2 text-primary"></i> My Profile</a></li>
+                        <li><a class="dropdown-item-smartbook" href="/my-books"><i class="bi bi-journal-bookmark me-2 text-success"></i> My Books</a></li>
+                        <li><a class="dropdown-item-smartbook" href="/wishlist"><i class="bi bi-heart me-2 text-danger"></i> My Wishlist</a></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li>
+                            <form action="{{ url_for('auth.logout') if url_for else '/auth/logout' }}" method="POST" class="m-0 p-0">
+                                <button type="submit" class="dropdown-item-smartbook text-danger border-0 bg-transparent w-100 text-start">
+                                    <i class="bi bi-box-arrow-left me-2"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </header>
 

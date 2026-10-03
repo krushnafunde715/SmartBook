@@ -4,8 +4,10 @@ Renders Landing, Dashboard, Explore, My Books, Wishlist, Reading History, and Pr
 """
 
 from datetime import datetime
+import json
 from flask import Blueprint, render_template, redirect, url_for
 from flask_login import login_required, current_user
+from sqlalchemy.orm import selectinload
 from models import db, Genre, Book, UserBook, WishlistItem, ReadingHistory
 from recommendation_engine import get_recommendations_for_user
 from stats_service import (
@@ -31,17 +33,34 @@ def index():
 @login_required
 def dashboard():
     """Authenticated User Dashboard View"""
-    all_books = Book.query.all()
+    all_books = Book.query.options(selectinload(Book.genres)).all()
     recommendations = get_recommendations_for_user(current_user, all_books, limit=6)
 
-    stats = get_user_reading_stats(current_user.id)
-    user_books = UserBook.query.filter_by(user_id=current_user.id).all()
+    user_books = (
+        UserBook.query
+        .options(selectinload(UserBook.book).selectinload(Book.genres))
+        .filter_by(user_id=current_user.id)
+        .all()
+    )
+    stats = get_user_reading_stats(current_user.id, user_books=user_books)
     currently_reading = [ub for ub in user_books if normalize_status(ub.status) == STATUS_CURRENTLY_READING]
     want_to_read = [ub for ub in user_books if normalize_status(ub.status) == STATUS_WANT_TO_READ]
     completed = [ub for ub in user_books if normalize_status(ub.status) == STATUS_COMPLETED]
 
-    wishlist_items = WishlistItem.query.filter_by(user_id=current_user.id).all()
-    recent_history = ReadingHistory.query.filter_by(user_id=current_user.id).order_by(ReadingHistory.created_at.desc()).limit(5).all()
+    wishlist_items = (
+        WishlistItem.query
+        .options(selectinload(WishlistItem.book).selectinload(Book.genres))
+        .filter_by(user_id=current_user.id)
+        .all()
+    )
+    recent_history = (
+        ReadingHistory.query
+        .options(selectinload(ReadingHistory.book))
+        .filter_by(user_id=current_user.id)
+        .order_by(ReadingHistory.created_at.desc())
+        .limit(5)
+        .all()
+    )
 
     return render_template(
         'main/dashboard.html',
@@ -60,7 +79,7 @@ def dashboard():
 @login_required
 def explore():
     """Explore Catalog View"""
-    books = Book.query.order_by(Book.rating.desc()).all()
+    books = Book.query.options(selectinload(Book.genres)).order_by(Book.rating.desc()).all()
     genres = Genre.query.all()
 
     user_book_ids = {ub.book_id for ub in UserBook.query.filter_by(user_id=current_user.id).all()}
@@ -79,11 +98,18 @@ def explore():
 @login_required
 def my_books():
     """My Books Shelves View"""
-    stats = get_user_reading_stats(current_user.id)
-    user_books = UserBook.query.filter_by(user_id=current_user.id).all()
+    user_books = (
+        UserBook.query
+        .options(selectinload(UserBook.book).selectinload(Book.genres))
+        .filter_by(user_id=current_user.id)
+        .all()
+    )
+    stats = get_user_reading_stats(current_user.id, user_books=user_books)
     currently_reading = [ub for ub in user_books if normalize_status(ub.status) == STATUS_CURRENTLY_READING]
     want_to_read = [ub for ub in user_books if normalize_status(ub.status) == STATUS_WANT_TO_READ]
     completed = [ub for ub in user_books if normalize_status(ub.status) == STATUS_COMPLETED]
+
+    initial_books_json = json.dumps([ub.to_dict() for ub in user_books])
 
     return render_template(
         'main/my_books.html',
@@ -91,7 +117,8 @@ def my_books():
         currently_reading=currently_reading,
         want_to_read=want_to_read,
         completed=completed,
-        total_count=stats['total_books']
+        total_count=stats['total_books'],
+        initial_books_json=initial_books_json
     )
 
 
@@ -99,7 +126,13 @@ def my_books():
 @login_required
 def wishlist():
     """My Wishlist View"""
-    wishlist_items = WishlistItem.query.filter_by(user_id=current_user.id).order_by(WishlistItem.added_at.desc()).all()
+    wishlist_items = (
+        WishlistItem.query
+        .options(selectinload(WishlistItem.book).selectinload(Book.genres))
+        .filter_by(user_id=current_user.id)
+        .order_by(WishlistItem.added_at.desc())
+        .all()
+    )
     return render_template('main/wishlist.html', wishlist_items=wishlist_items)
 
 
@@ -107,11 +140,22 @@ def wishlist():
 @login_required
 def history():
     """Reading History View"""
-    stats = get_user_reading_stats(current_user.id)
-    user_books = UserBook.query.filter_by(user_id=current_user.id).all()
+    user_books = (
+        UserBook.query
+        .options(selectinload(UserBook.book).selectinload(Book.genres))
+        .filter_by(user_id=current_user.id)
+        .all()
+    )
+    stats = get_user_reading_stats(current_user.id, user_books=user_books)
     completed_books = [ub for ub in user_books if normalize_status(ub.status) == STATUS_COMPLETED]
     completed_books.sort(key=lambda ub: ub.completed_at or ub.updated_at or datetime.min, reverse=True)
-    history_events = ReadingHistory.query.filter_by(user_id=current_user.id).order_by(ReadingHistory.created_at.desc()).all()
+    history_events = (
+        ReadingHistory.query
+        .options(selectinload(ReadingHistory.book))
+        .filter_by(user_id=current_user.id)
+        .order_by(ReadingHistory.created_at.desc())
+        .all()
+    )
 
     return render_template(
         'main/history.html',

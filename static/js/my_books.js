@@ -106,6 +106,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Load or Initialize Data
     function getMyBooks() {
+        const initDataEl = document.getElementById('initial-library-data');
+        if (initDataEl && initDataEl.textContent.trim()) {
+            try {
+                const parsed = JSON.parse(initDataEl.textContent);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    saveMyBooks(parsed);
+                    return parsed;
+                }
+            } catch (e) {
+                console.warn('Initial data parse error:', e);
+            }
+        }
         try {
             const data = localStorage.getItem(STORAGE_KEY);
             if (data) {
@@ -828,5 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial render & sync
     renderShelves();
-    loadLibraryFromBackend();
+    if (!myBooks || myBooks.length === 0) {
+        loadLibraryFromBackend();
+    }
 });
