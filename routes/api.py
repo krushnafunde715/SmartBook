@@ -4,6 +4,7 @@ Provides JSON endpoints for Profile, Preferences, Catalog Search, Shelves, Wishl
 """
 
 from datetime import datetime
+from sqlalchemy.orm import selectinload
 from flask import Blueprint, request, jsonify
 from flask_login import current_user
 from models import db, User, Genre, Book, UserPreferences, UserBook, WishlistItem, ReadingHistory, utcnow
@@ -270,7 +271,14 @@ def api_library():
         return jsonify({'success': False, 'message': 'User not found'}), 404
 
     if request.method == 'GET':
-        user_books = UserBook.query.filter_by(user_id=target_user.id).all()
+        user_books = (
+            UserBook.query
+            .options(
+                selectinload(UserBook.book).selectinload(Book.genres)
+            )
+            .filter_by(user_id=target_user.id)
+            .all()
+        )
         stats = get_user_reading_stats(target_user.id)
         book_dicts = [ub.to_dict() for ub in user_books]
         return jsonify({

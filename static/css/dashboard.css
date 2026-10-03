@@ -340,6 +340,45 @@ button.sb-dash-nav-link {
     width: 100%;
 }
 
+/* Dashboard Reading Quote */
+.sb-dash-quote {
+    margin-left: auto;
+    width: 340px;
+    max-width: 42%;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.sb-quote-mark {
+    display: block;
+    font-family: Georgia, serif;
+    font-size: 4rem;
+    line-height: 0.7;
+    color: #D9B98C;
+    opacity: 0.9;
+}
+
+.sb-quote-text {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: #FFFDF7;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.65);
+    margin: 0.8rem 0;
+}
+
+.sb-quote-author {
+    display: block;
+    font-family: Georgia, serif;
+    font-size: 0.9rem;
+    color: #E8D7BC;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
 .sb-dash-hero-title {
     font-family: var(--sb-font-serif);
     font-size: 2.2rem;
@@ -1050,6 +1089,25 @@ button.sb-dash-nav-link {
     .sb-dash-hero-content {
         padding: 1.5rem;
     }
+
+    .sb-dash-hero-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .sb-dash-quote {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        padding: 1rem 0 0;
+        text-align: left;
+    }
+
+    .sb-quote-text {
+        font-size: 1.1rem;
+    }
+
 }
 
 @media (max-width: 575.98px) {
