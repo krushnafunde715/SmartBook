@@ -1,3 +1,7 @@
+# ==============================================================================
+# SmartBook — Git Ignore Configuration
+# ==============================================================================
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -32,20 +36,27 @@ ENV/
 env.bak/
 venv.bak/
 
-# Logs
-*.log
-logs/
-
 # Environment Variables & Secrets (CRITICAL: NEVER COMMIT REAL SECRETS)
 .env
 .env.local
 .env.production
+.env.*.local
 
-# Local Databases
+# Certificates & Private Keys
+certificates/
+*.pem
+*.key
+*.crt
+
+# Local Database Files
 *.db
 *.sqlite
 *.sqlite3
 smartbook.db
+
+# Logs & Monitoring
+*.log
+logs/
 
 # Unit test / coverage reports
 htmlcov/
@@ -59,21 +70,26 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
-# IDE & OS files
+# IDE & Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
+*.sublime-workspace
+*.sublime-project
+
+# OS Generated Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 
 # Temporary & Scratch Files
 scratch/
 audit_*.py
 reconcile_*.py
-
-.env
-certificates/
-__pycache__/
-*.pyc
